@@ -1,0 +1,757 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Premium Menyu — AMINA Sushi{% endblock %}
+
+{% block extra_styles %}
+<style>
+/* ============================
+   MENU PAGE
+   ============================ */
+.menu-page {
+    min-height: 100vh;
+    padding-top: var(--nav-h);
+}
+
+/* ── Hero bar ── */
+.menu-hero-bar {
+    position: relative;
+    padding: 80px 0 60px;
+    overflow: hidden;
+    border-bottom: 1px solid var(--flint);
+}
+.menu-hero-bar::before {
+    content: 'MENYU';
+    position: absolute;
+    top: -10px; right: 0;
+    font-family: var(--font-serif);
+    font-size: 200px;
+    font-weight: 900;
+    color: var(--ash);
+    letter-spacing: -8px;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+}
+.menu-hero-inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 40px;
+    align-items: end;
+    position: relative; z-index: 1;
+}
+.menu-hero-right { text-align: right; }
+.menu-count {
+    font-family: var(--font-serif);
+    font-size: 80px;
+    font-weight: 900;
+    color: transparent;
+    -webkit-text-stroke: 1px rgba(201,168,76,0.3);
+    line-height: 1;
+    display: block;
+}
+.menu-count-label { font-size: 12px; color: var(--smoke); letter-spacing: 3px; text-transform: uppercase; }
+
+/* ── Category filter ── */
+.cat-filter {
+    position: sticky;
+    top: var(--nav-h);
+    z-index: 100;
+    background: rgba(5,5,5,0.9);
+    backdrop-filter: blur(20px) saturate(1.5);
+    border-bottom: 1px solid var(--flint);
+    padding: 16px 0;
+}
+.cat-filter-inner {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    padding: 4px 0;
+    align-items: center;
+}
+.cat-filter-inner::-webkit-scrollbar { display: none; }
+.cat-pill {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 10px 22px;
+    border: 1px solid var(--flint);
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+    color: var(--mist);
+    cursor: pointer;
+    transition: all 0.35s var(--ease-out);
+    white-space: nowrap;
+    background: transparent;
+    font-family: var(--font-sans);
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+.cat-pill::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: rgba(201,168,76,0.08);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s var(--ease-out);
+}
+.cat-pill:hover::before { transform: scaleX(1); }
+.cat-pill:hover { border-color: rgba(201,168,76,0.35); color: var(--snow); }
+.cat-pill.active {
+    background: var(--gold);
+    color: var(--void);
+    border-color: var(--gold);
+    font-weight: 600;
+}
+.cat-pill.active::before { display: none; }
+.cat-pill-img {
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    opacity: 0.7;
+    transition: opacity 0.3s;
+}
+.cat-pill:hover .cat-pill-img,
+.cat-pill.active .cat-pill-img { opacity: 1; }
+
+/* ── Category sections ── */
+.menu-sections { padding: 60px 0 100px; }
+.cat-section { margin-bottom: 80px; }
+.cat-section-header {
+    display: flex; align-items: center; gap: 24px;
+    margin-bottom: 40px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--flint);
+}
+.cat-section-img {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    filter: saturate(0.7);
+    border: 2px solid var(--flint);
+    transition: all 0.4s;
+}
+.cat-section:hover .cat-section-img { filter: saturate(1); border-color: var(--gold); }
+.cat-section-title {
+    font-family: var(--font-serif);
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--white);
+    letter-spacing: -0.5px;
+}
+.cat-section-count {
+    margin-left: auto;
+    font-size: 13px;
+    color: var(--smoke);
+    letter-spacing: 2px;
+    font-weight: 500;
+}
+
+/* ── Meal cards ── */
+.meals-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 28px;
+}
+
+/* === ENTRY ANIMATION === */
+@keyframes cardEnter {
+    from { opacity: 0; transform: translateY(50px) scale(0.95); filter: blur(6px); }
+    to { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+.meal-card {
+    opacity: 0;
+    animation: cardEnter 0.7s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+/* === CARD BASE === */
+.meal-card {
+    position: relative;
+    background: var(--ash);
+    overflow: hidden;
+    cursor: pointer;
+    display: flex; flex-direction: column;
+    border-radius: var(--r-xl);
+    border: 1px solid var(--flint);
+    transition: transform 0.5s cubic-bezier(.16,1,.3,1), box-shadow 0.5s cubic-bezier(.16,1,.3,1), border-color 0.5s ease;
+    z-index: 1;
+}
+
+/* === BORDER TRAVEL LIGHT — yon tomonlar bo'ylab aylanadi === */
+.meal-card .border-light {
+    position: absolute; inset: 0;
+    border-radius: var(--r-xl);
+    pointer-events: none; z-index: 20;
+    overflow: hidden;
+}
+.meal-card .border-light .bl {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+}
+/* Top edge */
+.meal-card .border-light .bl-t {
+    top: 0; left: -100%; width: 60%; height: 1.5px;
+}
+/* Right edge */
+.meal-card .border-light .bl-r {
+    top: -100%; right: 0; width: 1.5px; height: 60%;
+    background: linear-gradient(180deg, transparent, var(--gold), transparent);
+}
+/* Bottom edge */
+.meal-card .border-light .bl-b {
+    bottom: 0; right: -100%; width: 60%; height: 1.5px;
+}
+/* Left edge */
+.meal-card .border-light .bl-l {
+    bottom: -100%; left: 0; width: 1.5px; height: 60%;
+    background: linear-gradient(0deg, transparent, var(--gold), transparent);
+}
+.meal-card:hover .border-light .bl-t { animation: blTop 1.6s 0s ease-in-out infinite; }
+.meal-card:hover .border-light .bl-r { animation: blRight 1.6s 0.4s ease-in-out infinite; }
+.meal-card:hover .border-light .bl-b { animation: blBottom 1.6s 0.8s ease-in-out infinite; }
+.meal-card:hover .border-light .bl-l { animation: blLeft 1.6s 1.2s ease-in-out infinite; }
+
+@keyframes blTop {
+    0%   { left: -60%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { left: 100%; opacity: 0; }
+}
+@keyframes blRight {
+    0%   { top: -60%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { top: 100%; opacity: 0; }
+}
+@keyframes blBottom {
+    0%   { right: -60%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { right: 100%; opacity: 0; }
+}
+@keyframes blLeft {
+    0%   { bottom: -60%; opacity: 0; }
+    10%  { opacity: 1; }
+    90%  { opacity: 1; }
+    100% { bottom: 100%; opacity: 0; }
+}
+
+/* === SHIMMER LINE === */
+.meal-card .shimmer {
+    position: absolute;
+    top: 0; left: -100%; width: 40%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201,168,76,0.1), transparent);
+    transform: skewX(-15deg);
+    pointer-events: none; z-index: 20;
+    border-radius: var(--r-xl);
+    transition: none;
+}
+.meal-card:hover .shimmer { animation: shimmerSweep 0.9s ease-out forwards; }
+@keyframes shimmerSweep { to { left: 150%; } }
+
+/* === HOVER LIFT === */
+.meal-card:hover {
+    transform: translateY(-10px);
+    box-shadow:
+        0 24px 64px rgba(0,0,0,0.4),
+        0 0 0 1px rgba(201,168,76,0.15),
+        0 0 60px rgba(201,168,76,0.08);
+    z-index: 10;
+    border-color: rgba(201,168,76,0.2);
+}
+
+/* === IMAGE WRAP === */
+.meal-card-img-wrap {
+    position: relative;
+    height: 240px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border-radius: var(--r-xl) var(--r-xl) 0 0;
+}
+.meal-card-img-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(.16,1,.3,1), filter 0.8s ease;
+    filter: saturate(0.8) brightness(0.85);
+}
+.meal-card:hover .meal-card-img-wrap img {
+    transform: scale(1.1);
+    filter: saturate(1.1) brightness(0.95);
+}
+
+/* === IMAGE OVERLAY === */
+.meal-card-img-wrap .img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(180deg, transparent 30%, rgba(5,5,5,0.85) 100%);
+    z-index: 1; pointer-events: none;
+    opacity: 0; transition: opacity 0.6s ease;
+}
+.meal-card:hover .meal-card-img-wrap .img-overlay { opacity: 1; }
+
+/* === GOLDEN LINE ON IMAGE BOTTOM === */
+.meal-card-img-wrap .img-line {
+    position: absolute; bottom: 0; left: 0;
+    width: 0; height: 2px; z-index: 3;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transition: width 0.8s cubic-bezier(.16,1,.3,1) 0.1s;
+}
+.meal-card:hover .meal-card-img-wrap .img-line { width: 100%; }
+
+/* === DISCOUNT BADGE === */
+.meal-card-discount {
+    position: absolute; top: 14px; right: 14px;
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    font-size: 11px; font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 50px;
+    z-index: 3;
+    box-shadow: 0 4px 16px rgba(231,76,60,0.35);
+    animation: badgePulse 2.5s ease-in-out infinite;
+}
+@keyframes badgePulse { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
+
+/* === BODY === */
+.meal-card-body {
+    padding: 24px;
+    flex: 1;
+    display: flex; flex-direction: column;
+    position: relative; z-index: 2;
+}
+
+/* === NAME === */
+.meal-card-name {
+    font-family: var(--font-serif);
+    font-size: 20px; font-weight: 600;
+    color: var(--white);
+    margin-bottom: 6px; line-height: 1.25;
+    transition: color 0.4s ease;
+}
+.meal-card:hover .meal-card-name { color: var(--gold); }
+
+/* === NAME UNDERLINE === */
+.meal-card-name::after {
+    content: '';
+    display: block;
+    width: 0; height: 1.5px;
+    background: linear-gradient(90deg, var(--gold), transparent);
+    margin-top: 6px;
+    transition: width 0.6s cubic-bezier(.16,1,.3,1) 0.15s;
+}
+.meal-card:hover .meal-card-name::after { width: 40px; }
+
+/* === DESC === */
+.meal-card-desc {
+    font-size: 13px;
+    color: var(--mist);
+    line-height: 1.7;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    margin-bottom: 18px;
+    transition: color 0.4s ease;
+}
+.meal-card:hover .meal-card-desc { color: var(--cloud); }
+
+/* === FOOTER === */
+.meal-card-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid var(--flint);
+    transition: border-color 0.4s ease;
+}
+.meal-card:hover .meal-card-footer { border-color: rgba(201,168,76,0.2); }
+
+/* === PRICE === */
+.meal-price { display: flex; flex-direction: column; gap: 2px; }
+.meal-price-old {
+    font-size: 11px; color: var(--smoke); text-decoration: line-through;
+    transition: opacity 0.4s;
+}
+.meal-card:hover .meal-price-old { opacity: 0.4; }
+.meal-price-new {
+    font-family: var(--font-serif);
+    font-size: 22px; font-weight: 700;
+    color: var(--gold); line-height: 1;
+    transition: transform 0.4s cubic-bezier(.16,1,.3,1), text-shadow 0.4s ease;
+}
+.meal-card:hover .meal-price-new {
+    transform: scale(1.06);
+    text-shadow: 0 0 16px rgba(201,168,76,0.3);
+}
+.meal-price-currency { font-size: 11px; font-weight: 400; }
+
+/* === ADD BUTTON === */
+.meal-add-btn {
+    width: 44px; height: 44px;
+    background: transparent;
+    border: 1.5px solid rgba(201,168,76,0.25);
+    color: var(--gold);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    transition: all 0.5s cubic-bezier(.16,1,.3,1);
+    cursor: pointer;
+    position: relative; overflow: hidden;
+}
+.meal-add-btn::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold);
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.5s cubic-bezier(.16,1,.3,1);
+}
+.meal-card:hover .meal-add-btn {
+    border-color: var(--gold);
+    box-shadow: 0 0 20px rgba(201,168,76,0.2);
+}
+.meal-add-btn:hover::before,
+.meal-card:hover .meal-add-btn::before { transform: scale(1); }
+.meal-add-btn i { position: relative; z-index: 1; transition: transform 0.4s cubic-bezier(.16,1,.3,1); }
+.meal-add-btn:hover i,
+.meal-card:hover .meal-add-btn i { transform: rotate(90deg); }
+.meal-card:hover .meal-add-btn,
+.meal-add-btn:hover { color: var(--void); }
+
+/* === ADDED STATE === */
+.meal-add-btn.added {
+    background: rgba(76, 175, 80, 0.12);
+    border-color: #4caf50; color: #4caf50;
+    animation: popIn 0.4s cubic-bezier(.16,1,.3,1);
+}
+.meal-add-btn.added::before { transform: scale(0); }
+@keyframes popIn {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.25); }
+    100% { transform: scale(1.05); }
+}
+
+/* === TOAST === */
+.toast {
+    position: fixed;
+    bottom: 32px; right: 32px;
+    z-index: 10000;
+    background: var(--ash);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 16px 24px;
+    border-radius: var(--r-md);
+    display: flex; align-items: center; gap: 12px;
+    font-size: 14px; color: var(--snow);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(.16,1,.3,1);
+    pointer-events: none;
+    backdrop-filter: blur(16px);
+}
+.toast.show { transform: translateY(0); opacity: 1; }
+.toast i { color: var(--gold); font-size: 18px; }
+
+/* === EMPTY STATE === */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 80px 20px;
+}
+.empty-state i { font-size: 48px; color: var(--smoke); margin-bottom: 20px; display: block; }
+.empty-state p { color: var(--mist); font-size: 16px; }
+
+/* === RESPONSIVE === */
+@media (max-width: 900px) {
+    .menu-hero-inner { grid-template-columns: 1fr; }
+    .menu-hero-right { text-align: left; }
+    .menu-hero-bar::before { font-size: 100px; opacity: 0.5; }
+    .meals-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
+}
+@media (max-width: 600px) {
+    .meals-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .meal-card-img-wrap { height: 150px; }
+    .meal-card-body { padding: 14px; }
+    .meal-card-name { font-size: 15px; }
+    .meal-price-new { font-size: 17px; }
+    .meal-add-btn { width: 36px; height: 36px; font-size: 13px; }
+}
+@media (max-width: 400px) {
+    .meals-grid { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="menu-page">
+
+    <!-- Hero bar -->
+    <div class="menu-hero-bar">
+        <div class="container">
+            <div class="menu-hero-inner">
+                <div>
+                    <div class="section-eyebrow reveal">
+                        <span class="section-jp">メニュー</span>
+                        <span class="section-line"></span>
+                    </div>
+                    <h1 class="section-title reveal">Premium <em>Menyu</em></h1>
+                    <p class="section-sub reveal">Eng sara masalliqlar, usta qo'llar va yapon san'atining uyg'unligi.</p>
+                </div>
+                <div class="menu-hero-right reveal">
+                    <span class="menu-count" id="menuTotalCount">{{ categories|length }}0<sup>+</sup></span>
+                    <span class="menu-count-label">Taom turi</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category filter -->
+    <div class="cat-filter">
+        <div class="container">
+            <div class="cat-filter-inner" id="catFilter">
+                <button class="cat-pill active" data-cat="all">
+                    <span>Barchasi</span>
+                </button>
+                {% for cat in categories %}
+                <button class="cat-pill" data-cat="{{ cat.id }}">
+                    {% if cat.image %}
+                    <img src="{{ cat.image.url }}" alt="{{ cat.name }}" class="cat-pill-img"
+                         onerror="this.style.display='none'">
+                    {% endif %}
+                    <span>{{ cat.name }}</span>
+                </button>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Meal sections -->
+    <div class="menu-sections">
+        <div class="container">
+            {% for cat in categories %}
+            {% if cat.meal_set.all %}
+            <div class="cat-section reveal" id="cat-{{ cat.id }}" data-cat-id="{{ cat.id }}">
+                <div class="cat-section-header">
+                    {% if cat.image %}
+                    <img src="{{ cat.image.url }}" alt="{{ cat.name }}" class="cat-section-img"
+                         onerror="this.style.display='none'">
+                    {% endif %}
+                    <h2 class="cat-section-title">{{ cat.name }}</h2>
+                    <span class="cat-section-count">{{ cat.meal_set.count }} taom</span>
+                </div>
+
+                <div class="meals-grid">
+                    {% for meal in cat.meal_set.all %}
+                    <div class="meal-card" data-id="{{ meal.id }}" data-name="{{ meal.name }}" data-price="{{ meal.get_final_price }}">
+                        <div class="border-light">
+                            <div class="bl bl-t"></div>
+                            <div class="bl bl-r"></div>
+                            <div class="bl bl-b"></div>
+                            <div class="bl bl-l"></div>
+                        </div>
+                        <div class="shimmer"></div>
+                        <div class="meal-card-img-wrap">
+                            {% if meal.get_first_image %}
+                            <img src="{{ meal.get_first_image }}" alt="{{ meal.name }}" loading="lazy"
+                                 onerror="this.src='https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=400&q=80';this.onerror=null;">
+                            {% else %}
+                            <img src="https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=400&q=80" alt="{{ meal.name }}">
+                            {% endif %}
+                            <div class="img-overlay"></div>
+                            <div class="img-line"></div>
+                            {% if meal.discount > 0 %}
+                            <span class="meal-card-discount">−{{ meal.discount }}%</span>
+                            {% endif %}
+                        </div>
+                        <div class="meal-card-body">
+                            <h3 class="meal-card-name">{{ meal.name }}</h3>
+                            <p class="meal-card-desc">{{ meal.description|truncatewords:12 }}</p>
+                            <div class="meal-card-footer">
+                                <div class="meal-price">
+                                    {% if meal.discount > 0 %}
+                                    <span class="meal-price-old">{{ meal.price|floatformat:0 }} UZS</span>
+                                    {% endif %}
+                                    <span class="meal-price-new">{{ meal.get_final_price|floatformat:0 }} <span class="meal-price-currency">UZS</span></span>
+                                </div>
+                                <button class="meal-add-btn" onclick="addToCart(this)" data-id="{{ meal.id }}" data-name="{{ meal.name }}" data-price="{{ meal.get_final_price }}" data-img="{% if meal.get_first_image %}{{ meal.get_first_image }}{% endif %}">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <!-- Sets section -->
+            {% if sets %}
+            <div class="cat-section reveal" id="cat-sets" data-cat-id="setlar">
+                <div class="cat-section-header">
+                    <h2 class="cat-section-title">Setlar</h2>
+                    <span class="cat-section-count">{{ sets.count }} set</span>
+                </div>
+
+                <div class="meals-grid">
+                    {% for set_obj in sets %}
+                    <div class="meal-card" data-id="set_{{ set_obj.id }}" data-name="{{ set_obj.name }}" data-price="{{ set_obj.price }}">
+                        <div class="border-light">
+                            <div class="bl bl-t"></div>
+                            <div class="bl bl-r"></div>
+                            <div class="bl bl-b"></div>
+                            <div class="bl bl-l"></div>
+                        </div>
+                        <div class="shimmer"></div>
+                        <div class="meal-card-img-wrap">
+                            {% if set_obj.images.first %}
+                            <img src="{{ set_obj.images.first.image.url }}" alt="{{ set_obj.name }}" loading="lazy"
+                                 onerror="this.src='https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&q=80';this.onerror=null;">
+                            {% elif set_obj.image %}
+                            <img src="{{ set_obj.image.url }}" alt="{{ set_obj.name }}" loading="lazy"
+                                 onerror="this.src='https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&q=80';this.onerror=null;">
+                            {% else %}
+                            <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400&q=80" alt="{{ set_obj.name }}">
+                            {% endif %}
+                            <div class="img-overlay"></div>
+                            <div class="img-line"></div>
+                            {% if set_obj.discount_percent > 0 %}
+                            <span class="meal-card-discount">−{{ set_obj.discount_percent }}%</span>
+                            {% endif %}
+                        </div>
+                        <div class="meal-card-body">
+                            <h3 class="meal-card-name">{{ set_obj.name }}</h3>
+                            <p class="meal-card-desc">{{ set_obj.description|truncatewords:12 }}</p>
+                            <div class="meal-card-footer">
+                                <div class="meal-price">
+                                    {% if set_obj.old_price %}
+                                    <span class="meal-price-old">{{ set_obj.old_price }} UZS</span>
+                                    {% endif %}
+                                    <span class="meal-price-new">{{ set_obj.price }} <span class="meal-price-currency">UZS</span></span>
+                                </div>
+                                <button class="meal-add-btn" onclick="addToCart(this)" data-id="set_{{ set_obj.id }}" data-name="{{ set_obj.name }}" data-price="{{ set_obj.price }}" data-img="{% if set_obj.images.first %}{{ set_obj.images.first.image.url }}{% elif set_obj.image %}{{ set_obj.image.url }}{% endif %}">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg">Savatga qo'shildi!</span>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Category filter
+const pills = document.querySelectorAll('.cat-pill');
+pills.forEach(pill => {
+    pill.addEventListener('click', () => {
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        const cat = pill.dataset.cat;
+        const sections = document.querySelectorAll('.cat-section');
+        sections.forEach(sec => {
+            if (cat === 'all' || sec.dataset.catId === cat) {
+                sec.style.display = '';
+                setTimeout(() => sec.classList.add('visible'), 10);
+            } else {
+                sec.style.display = 'none';
+            }
+        });
+        if (cat !== 'all') {
+            const target = document.getElementById(`cat-${cat}`);
+            if (target) {
+                const offset = 140;
+                const y = target.getBoundingClientRect().top + window.scrollY - offset;
+                window.scrollTo({ top: y, behavior: 'smooth' });
+            }
+        }
+    });
+});
+
+// Cart
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+function addToCart(btn) {
+    const id = btn.dataset.id;
+    const name = btn.dataset.name;
+    const price = parseInt(btn.dataset.price);
+    const img = btn.dataset.img || '';
+
+    const existing = cart.find(i => i.id === id);
+    if (existing) {
+        existing.qty = (existing.qty || 1) + 1;
+    } else {
+        cart.push({ id, name, price, img, qty: 1 });
+    }
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    // Visual feedback
+    btn.classList.add('added');
+    const icon = btn.querySelector('i');
+    icon.className = 'fas fa-check';
+    setTimeout(() => {
+        btn.classList.remove('added');
+        icon.className = 'fas fa-plus';
+    }, 1500);
+
+    // Badge
+    updateCartBadge();
+
+    // Toast
+    showToast(name + " savatga qo'shildi!");
+}
+
+let toastTimer;
+function showToast(msg) {
+    const toast = document.getElementById('toast');
+    const toastMsg = document.getElementById('toastMsg');
+    toastMsg.textContent = msg;
+    toast.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
+}
+
+// Scroll reveal + staggered card entry
+document.addEventListener('DOMContentLoaded', () => {
+    // Reveal observer for sections
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Staggered card entry animation
+    document.querySelectorAll('.cat-section').forEach(sec => {
+        const cards = sec.querySelectorAll('.meal-card');
+        const cardObs = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    cards.forEach((card, i) => {
+                        card.style.animationDelay = (i * 0.08) + 's';
+                    });
+                    cardObs.unobserve(sec);
+                }
+            });
+        }, { threshold: 0.05 });
+        cardObs.observe(sec);
+    });
+});
+</script>
+{% endblock %}

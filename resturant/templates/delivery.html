@@ -1,0 +1,405 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Yetkazib berish — AMINA Sushi{% endblock %}
+
+{% block extra_styles %}
+<style>
+.delivery-section {
+    padding: calc(var(--nav-h) + 60px) 0 100px;
+    min-height: 100vh;
+    position: relative;
+}
+
+.delivery-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 400px;
+    background: radial-gradient(ellipse at 30% 0%, var(--gold-glow) 0%, transparent 60%);
+    pointer-events: none;
+}
+
+.delivery-header {
+    text-align: center;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+}
+
+.delivery-header .section-eyebrow { justify-content: center; }
+
+.zones-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 24px;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+}
+
+.z-card {
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    transition: all 0.5s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+}
+
+.z-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.5s var(--ease-out);
+}
+
+.z-card:hover::before { transform: scaleX(1); }
+
+.z-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.04) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+    border-radius: var(--r-lg);
+}
+
+.z-card:hover::after { opacity: 1; }
+
+.z-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--gold-dim);
+    box-shadow: 0 20px 48px rgba(0,0,0,0.15);
+}
+
+.z-ico {
+    width: 52px;
+    height: 52px;
+    background: var(--gold-glow);
+    border: 1px solid rgba(201, 168, 76, 0.15);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: var(--gold);
+    margin-bottom: 18px;
+    transition: all 0.4s var(--spring);
+}
+
+.z-card:hover .z-ico {
+    background: var(--gold);
+    color: var(--void);
+    transform: scale(1.1) rotate(360deg);
+    box-shadow: 0 0 20px var(--gold-glow-strong);
+}
+
+.z-name {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--snow);
+    transition: color 0.3s;
+}
+
+.z-card:hover .z-name { color: var(--gold); }
+
+.z-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.z-detail {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--mist);
+    transition: color 0.3s;
+}
+
+.z-card:hover .z-detail { color: var(--cloud); }
+
+.z-detail i { color: var(--gold-dim); width: 16px; text-align: center; transition: transform 0.3s var(--spring); }
+.z-card:hover .z-detail i { transform: scale(1.15); }
+
+.z-fee {
+    display: inline-block;
+    background: var(--gold-glow);
+    border: 1px solid rgba(201, 168, 76, 0.15);
+    color: var(--gold);
+    padding: 5px 12px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 10px;
+    transition: all 0.3s var(--spring);
+}
+
+.z-card:hover .z-fee {
+    background: var(--gold);
+    color: var(--void);
+    transform: scale(1.05);
+}
+
+.z-min {
+    font-size: 12px;
+    color: var(--mist);
+    margin-bottom: 10px;
+}
+
+.z-desc {
+    font-size: 13px;
+    color: var(--mist);
+    line-height: 1.7;
+    border-top: 1px solid var(--flint);
+    padding-top: 12px;
+    transition: border-color 0.3s;
+}
+
+.z-card:hover .z-desc { border-color: var(--gold-dim); }
+
+.delivery-rules {
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-lg);
+    padding: 32px;
+    position: relative;
+    z-index: 1;
+    transition: border-color 0.3s;
+}
+
+.delivery-rules:hover { border-color: var(--gold-dim); }
+
+.delivery-rules h3 {
+    font-family: var(--font-serif);
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 22px;
+    color: var(--gold);
+}
+
+.delivery-rules ul { list-style: none; padding: 0; }
+
+.delivery-rules li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--flint);
+    color: var(--mist);
+    font-size: 14px;
+    line-height: 1.6;
+    transition: all 0.3s var(--ease-out);
+}
+
+.delivery-rules li:last-child { border-bottom: none; }
+
+.delivery-rules li:hover {
+    color: var(--snow);
+    transform: translateX(6px);
+}
+
+.delivery-rules li i {
+    color: var(--gold-dim);
+    margin-top: 3px;
+    flex-shrink: 0;
+    width: 18px;
+    text-align: center;
+    transition: all 0.3s var(--spring);
+}
+
+.delivery-rules li:hover i {
+    color: var(--gold);
+    transform: scale(1.2);
+}
+
+.empty-zones {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--mist);
+    grid-column: 1/-1;
+}
+
+.empty-zones i { font-size: 42px; opacity: 0.3; margin-bottom: 14px; display: block; animation: float 3s ease-in-out infinite; }
+
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+/* Branch selector */
+.branch-selector {
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    margin-bottom: 48px;
+    text-align: center;
+}
+.branch-selector h3 {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    color: var(--gold);
+    margin-bottom: 20px;
+}
+.branch-selector p {
+    color: var(--mist);
+    font-size: 14px;
+    margin-bottom: 20px;
+}
+.branch-select-wrap {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+.branch-opt {
+    padding: 14px 24px;
+    background: var(--stone);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-sm);
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    color: var(--mist);
+}
+.branch-opt:hover {
+    border-color: var(--gold-dim);
+    color: var(--snow);
+}
+.branch-opt.selected {
+    background: rgba(201,168,76,0.1);
+    border-color: var(--gold);
+    color: var(--gold);
+}
+.branch-opt i { color: var(--gold-dim); }
+.branch-opt.selected i { color: var(--gold); }
+
+.branch-opt input { display: none; }
+
+@media (max-width: 768px) {
+    .zones-grid { grid-template-columns: 1fr; }
+    .delivery-rules { padding: 24px; }
+    .branch-select-wrap { flex-direction: column; }
+    .branch-opt { width: 100%; justify-content: center; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="delivery-section">
+    <div class="container">
+        <div class="delivery-header">
+            <div class="section-eyebrow">
+                <span class="section-jp">配達 — YETKAZISH</span>
+                <span class="section-line"></span>
+                <span class="section-num">04</span>
+            </div>
+            <h1 class="section-title">Yetkazib <em>berish</em></h1>
+            <p class="section-sub" style="margin: 0 auto;">Tez, qulay va sifatli yetkazib berish xizmati</p>
+        </div>
+
+        {% if branches %}
+        <div class="branch-selector reveal">
+            <h3><i class="fas fa-store" style="margin-right:8px;"></i>Filialni tanlang</h3>
+            <p>Buyurtmangiz shu filialdan tayyorlanadi va yetkaziladi</p>
+            <div class="branch-select-wrap">
+                {% for b in branches %}
+                <label class="branch-opt" onclick="selectBranch(this, {{ b.id }})">
+                    <input type="radio" name="branch" value="{{ b.id }}">
+                    <i class="fas fa-store"></i>
+                    <span>{{ b.name }}</span>
+                </label>
+                {% endfor %}
+            </div>
+            <a href="/cart" class="btn-gold" style="display:inline-flex;margin-top:24px;">
+                <span>Savatga o'tish</span>
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="zones-grid stagger-children">
+            {% if zones %}
+            {% for zone in zones %}
+            <div class="z-card reveal">
+                <div class="z-ico"><i class="fas fa-map-marker-alt"></i></div>
+                <div class="z-name">{{ zone.name }}</div>
+                <div class="z-details">
+                    <div class="z-detail"><i class="fas fa-clock"></i> {{ zone.estimated_time }}</div>
+                    <div class="z-detail"><i class="fas fa-truck"></i> Yetkazib berish</div>
+                </div>
+                <div class="z-fee">{{ zone.delivery_fee|floatformat:0 }} UZS</div>
+                <div class="z-min">Minimal buyurtma: {{ zone.min_order|floatformat:0 }} UZS</div>
+                {% if zone.description %}
+                <div class="z-desc">{{ zone.description }}</div>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% else %}
+            <div class="empty-zones">
+                <i class="fas fa-truck"></i>
+                <p>Yetkazib berish hududlari topilmadi</p>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="delivery-rules reveal">
+            <h3><i class="fas fa-clipboard-list" style="margin-right:8px;"></i>Yetkazib berish qoidalari</h3>
+            <ul>
+                <li><i class="fas fa-clock"></i> Buyurtma tasdiqlangach, taxminan 30-50 daqiqada yetkaziladi</li>
+                <li><i class="fas fa-map-marked-alt"></i> Yetkazish narxi hududga qarab o'zgaradi</li>
+                <li><i class="fas fa-shopping-bag"></i> Minimal buyurtma summasi quyida ko'rsatilgan</li>
+                <li><i class="fas fa-phone-alt"></i> Yetkazuvchi siz bilan aloqaga chiqadi</li>
+                <li><i class="fas fa-credit-card"></i> Naqd, karta yoki onlayn to'lov</li>
+                <li><i class="fas fa-undo"></i> Noto'g'ri manzil uchun qo'shimcha to'lov olinishi mumkin</li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+let selectedBranchId = null;
+
+function selectBranch(el, id) {
+    document.querySelectorAll('.branch-opt').forEach(opt => opt.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedBranchId = id;
+    localStorage.setItem('selected_branch', id);
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Restore previously selected branch
+    const saved = localStorage.getItem('selected_branch');
+    if (saved) {
+        const opt = document.querySelector(`.branch-opt input[value="${saved}"]`);
+        if (opt) {
+            opt.parentElement.classList.add('selected');
+            selectedBranchId = parseInt(saved);
+        }
+    }
+    
+    // Scroll reveal
+    const obs = new IntersectionObserver(entries => {
+        entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+});
+</script>
+{% endblock %}

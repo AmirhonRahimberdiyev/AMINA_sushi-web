@@ -1,0 +1,195 @@
+/* menyu.css */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+/* Navbar */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 15px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #FF0000;
+}
+
+.nav-links a {
+    margin: 0 15px;
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+    color: #FF0000;
+}
+
+/* Menu Hero */
+.menu-hero {
+    background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)),
+                url('https://via.placeholder.com/1920x600?text=EVOS+Menyu') center/cover no-repeat;
+    height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    margin-top: 70px;
+}
+
+.menu-hero h1 {
+    font-size: 4rem;
+    color: #FFCC00;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.8);
+    margin-bottom: 10px;
+}
+
+/* Kategoriyalar */
+.category-tabs {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 40px 0 50px 0;
+}
+
+.tab-btn {
+    padding: 12px 28px;
+    background: #f1f1f1;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.tab-btn.active,
+.tab-btn:hover {
+    background: #FF0000;
+    color: white;
+}
+
+/* Menu Grid */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    padding: 0 5%;
+}
+
+.menu-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.menu-card:hover {
+    transform: translateY(-12px);
+    box-shadow: 0 15px 35px rgba(255, 0, 0, 0.15);
+}
+
+.menu-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+.menu-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.menu-info h3 {
+    font-size: 1.55rem;
+    margin-bottom: 10px;
+    color: #222;
+}
+
+.menu-info p {
+    color: #666;
+    margin-bottom: 18px;
+    font-size: 0.98rem;
+    min-height: 48px;
+}
+
+/* Narx */
+.price {
+    margin-bottom: 18px;
+}
+
+.old-price {
+    text-decoration: line-through;
+    color: #999;
+    font-size: 1.1rem;
+}
+
+.new-price {
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: #FF0000;
+}
+
+.discount {
+    color: #e74c3c;
+    font-weight: 600;
+}
+
+/* Tugma */
+.add-to-cart {
+    background: #FF0000;
+    color: white;
+    border: none;
+    padding: 14px 30px;
+    border-radius: 50px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    width: 100%;
+    transition: all 0.3s;
+}
+
+.add-to-cart:hover {
+    background: #cc0000;
+    transform: scale(1.04);
+}
+
+/* Footer */
+footer {
+    background: #111;
+    color: white;
+    text-align: center;
+    padding: 50px 20px 30px;
+    margin-top: 80px;
+}
+
+.footer-links a {
+    color: #ddd;
+    margin: 0 15px;
+    text-decoration: none;
+}
+
+.footer-links a:hover {
+    color: #FF0000;
+}

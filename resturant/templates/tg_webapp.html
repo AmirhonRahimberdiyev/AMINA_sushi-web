@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>AMINA Premium Sushi</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cormorant+Garamond:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --void:#050505;--bg:#0a0a0a;--surface:#111;--card:#161616;--card2:#1a1a1a;
+  --border:rgba(255,255,255,.06);--border2:rgba(255,255,255,.1);
+  --gold:#C9A84C;--gold2:#e0c56e;--gold3:#8B7332;--gold-glow:rgba(201,168,76,.15);
+  --crimson:#8B0000;--crimson2:#a01020;--danger:#e74c3c;--danger-glow:rgba(231,76,60,.15);
+  --text:#f0ece0;--text2:#d0c8b8;--muted:#777;--muted2:#555;
+  --success:#27ae60;
+  --glass:rgba(255,255,255,.03);--glass2:rgba(255,255,255,.06);
+  --radius:16px;--radius-sm:12px;--radius-xs:8px;
+  --ease-out:cubic-bezier(.16,1,.3,1);--ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --ease-smooth:cubic-bezier(.4,0,.2,1);
+}
+html{font-size:16px;scroll-behavior:smooth}
+body{
+  background:var(--void);color:var(--text);font-family:'Inter',sans-serif;
+  min-height:100vh;padding-bottom:110px;overflow-x:hidden;
+  background-image:radial-gradient(circle at 50% 0%,rgba(201,168,76,.04) 0%,transparent 60%);
+}
+
+/* ====== SHIMMER KEYFRAME ====== */
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes pulse-gold{0%,100%{box-shadow:0 0 0 0 var(--gold-glow)}50%{box-shadow:0 0 20px 4px var(--gold-glow)}}
+@keyframes fade-in-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scale-in{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+@keyframes slide-in{from{transform:translateX(100%)}to{transform:translateX(0)}}
+@keyframes toast-in{from{opacity:0;transform:translate(-50%,20px)}to{opacity:1;transform:translate(-50%,0)}}
+@keyframes spin-slow{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@keyframes dot-pulse{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.5}}
+@keyframes gradient-shift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+
+/* ====== HEADER ====== */
+.tg-header{
+  position:sticky;top:0;z-index:100;
+  background:linear-gradient(180deg,var(--void) 60%,transparent);
+  padding:16px 14px 14px;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+}
+.tg-header-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.tg-logo{
+  font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;
+  background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold));
+  background-size:200% auto;-webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  animation:shimmer 4s linear infinite;
+}
+.header-btns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.hdr-btn{
+  width:38px;height:38px;border-radius:50%;border:1px solid var(--border2);
+  background:var(--glass);color:var(--gold);font-size:14px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;transition:all .25s var(--ease-out);position:relative;
+}
+.hdr-btn:active{transform:scale(.9);background:var(--gold-glow)}
+.hdr-btn.active{background:var(--gold);color:#000;border-color:var(--gold)}
+.hdr-btn-wide{width:auto;border-radius:50px;padding:0 12px;gap:5px;font-size:12px;font-weight:600}
+
+/* ====== BADGES ====== */
+.badge-dot{
+  position:absolute;top:-2px;right:-2px;width:14px;height:14px;
+  background:var(--danger);color:#fff;border-radius:50%;
+  font-size:9px;font-weight:800;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--void);
+  animation:dot-pulse 2s ease-in-out infinite;
+}
+.badge-dot:empty,.badge-dot[data-count="0"]{display:none}
+
+/* ====== SEARCH ====== */
+.tg-search{
+  width:100%;background:var(--surface);border:1px solid var(--border);
+  border-radius:50px;padding:11px 16px;
+  display:flex;align-items:center;gap:10px;
+  transition:border-color .3s var(--ease-out);
+}
+.tg-search:focus-within{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow)}
+.tg-search i{color:var(--muted);font-size:13px;flex-shrink:0}
+.tg-search input{
+  flex:1;background:none;border:none;outline:none;
+  color:var(--text);font-family:inherit;font-size:14px;
+}
+.tg-search input::placeholder{color:var(--muted2)}
+
+/* ====== CATEGORIES ====== */
+.cats-row{
+  display:flex;gap:8px;overflow-x:auto;padding:12px 14px;
+  scrollbar-width:none;-ms-overflow-style:none;
+}
+.cats-row::-webkit-scrollbar{display:none}
+.cat-chip{
+  flex-shrink:0;padding:8px 16px;
+  background:var(--glass);border:1px solid var(--border);
+  border-radius:50px;font-size:12px;font-weight:500;
+  color:var(--muted);cursor:pointer;white-space:nowrap;
+  transition:all .25s var(--ease-out);
+}
+.cat-chip:active{transform:scale(.95)}
+.cat-chip.active{
+  background:var(--gold);color:#000;border-color:var(--gold);
+  font-weight:700;box-shadow:0 2px 16px var(--gold-glow);
+}
+
+/* ====== SECTION LABEL ====== */
+.section-lbl{
+  padding:8px 14px 14px;font-size:10px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+}
+.section-lbl::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* ====== MEALS GRID ====== */
+.meals-section{padding:0 14px 24px}
+.meals-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.meal-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);overflow:hidden;
+  transition:all .3s var(--ease-out);position:relative;
+  animation:fade-in-up .5s var(--ease-out) both;
+}
+.meal-card:active{transform:scale(.97);border-color:var(--border2)}
+.meal-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(201,168,76,.04),transparent);
+  background-size:200% 100%;animation:shimmer 5s linear infinite;
+  pointer-events:none;z-index:1;
+}
+.meal-img{width:100%;height:130px;object-fit:cover;display:block}
+.meal-img-placeholder{
+  width:100%;height:130px;
+  background:linear-gradient(135deg,#14100a,#1a1408);
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+}
+.discount-tag{
+  position:absolute;top:8px;left:8px;z-index:3;
+  background:linear-gradient(135deg,var(--danger),var(--crimson2));
+  color:#fff;font-size:10px;font-weight:800;
+  padding:4px 9px;border-radius:50px;
+  box-shadow:0 2px 10px var(--danger-glow);
+}
+.meal-body{padding:10px 12px 12px}
+.meal-cat{
+  font-size:9px;font-weight:700;letter-spacing:1.5px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:4px;
+}
+.meal-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:16px;font-weight:700;line-height:1.25;margin-bottom:4px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.meal-desc{
+  font-size:10px;color:var(--muted);line-height:1.5;margin-bottom:8px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+}
+.meal-highlights{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.meal-highlight{
+  display:inline-flex;align-items:center;gap:3px;
+  background:var(--gold-glow);border:1px solid rgba(201,168,76,.12);
+  color:var(--gold);font-size:8px;padding:3px 7px;border-radius:50px;
+}
+.meal-highlight i{font-size:6px;color:var(--success)}
+.meal-meta{display:flex;gap:8px;margin-bottom:8px;font-size:9px;color:var(--muted)}
+.meal-meta i{color:var(--gold);margin-right:3px}
+.meal-items{
+  font-size:9px;color:var(--gold3);margin-bottom:6px;
+  display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;
+}
+.meal-items i{margin-right:3px}
+.meal-footer{display:flex;justify-content:space-between;align-items:flex-end}
+.meal-price{color:var(--gold);font-size:15px;font-weight:800}
+.meal-price-old{font-size:10px;color:var(--muted);text-decoration:line-through;margin-bottom:2px}
+.btn-add{
+  width:34px;height:34px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border:none;border-radius:50%;color:#000;font-size:14px;font-weight:800;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .25s var(--ease-spring);flex-shrink:0;
+}
+.btn-add:active{transform:scale(.85)}
+.btn-add.added{background:var(--success);animation:scale-in .3s var(--ease-spring)}
+
+/* ====== BOTTOM BAR ====== */
+.bottom-bar{
+  position:fixed;bottom:0;left:0;right:0;
+  padding:12px 14px 20px;
+  background:linear-gradient(180deg,transparent,var(--void) 30%);
+  z-index:150;
+}
+.btn-order{
+  width:100%;padding:16px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2),var(--gold));
+  background-size:200% auto;
+  color:#000;border:none;border-radius:var(--radius-sm);
+  font-size:15px;font-weight:800;letter-spacing:.5px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all .3s var(--ease-out);
+  box-shadow:0 4px 24px var(--gold-glow),0 0 0 0 transparent;
+}
+.btn-order:active{transform:scale(.97)}
+.btn-order:disabled{opacity:.5;pointer-events:none}
+.btn-order:hover{animation:shimmer 2s linear infinite}
+
+/* ====== PANEL SYSTEM ====== */
+.panel{
+  position:fixed;inset:0;z-index:200;pointer-events:none;
+  opacity:0;transition:opacity .35s var(--ease-smooth);
+}
+.panel.open{pointer-events:all;opacity:1}
+.panel-overlay{
+  position:absolute;inset:0;
+  background:rgba(0,0,0,.8);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  opacity:0;transition:opacity .35s var(--ease-smooth);
+}
+.panel.open .panel-overlay{opacity:1}
+.panel-body{
+  position:absolute;bottom:0;left:0;right:0;
+  max-height:88vh;overflow-y:auto;
+  background:var(--surface);
+  border-radius:24px 24px 0 0;
+  border:1px solid var(--border2);border-bottom:none;
+  padding:20px 16px 100px;
+  transform:translateY(100%);
+  transition:transform .4s var(--ease-out);
+  will-change:transform;
+}
+.panel.open .panel-body{transform:translateY(0)}
+.panel-handle{
+  width:36px;height:4px;background:var(--border2);
+  border-radius:4px;margin:0 auto 18px;
+}
+.panel-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:700;margin-bottom:18px;
+}
+.panel-title em{
+  font-style:italic;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+
+/* ====== CART ITEMS ====== */
+.cp-item{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 0;border-bottom:1px solid var(--border);
+  animation:slide-in .35s var(--ease-out) both;
+}
+.cp-icon{
+  width:44px;height:44px;flex-shrink:0;
+  background:linear-gradient(135deg,var(--gold-glow),rgba(201,168,76,.05));
+  border:1px solid rgba(201,168,76,.12);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:15px;
+}
+.cp-info{flex:1;min-width:0}
+.cp-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cp-price{font-size:12px;color:var(--muted);margin-top:2px}
+.cp-ctrl{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.cp-btn{
+  width:30px;height:30px;border-radius:50%;
+  border:1px solid var(--border2);background:var(--bg);
+  color:var(--text);font-size:14px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .2s var(--ease-out);
+}
+.cp-btn:active{transform:scale(.9)}
+.cp-btn.cp-del{
+  background:var(--danger-glow);border-color:rgba(231,76,60,.25);
+  color:var(--danger);
+}
+.cp-qty{min-width:22px;text-align:center;font-weight:700;font-size:14px}
+.cart-total-row{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-top:16px;padding:16px 0;border-top:1px solid var(--border2);
+}
+.cart-total-lbl{font-size:14px;color:var(--muted);font-weight:500}
+.cart-total-val{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;font-weight:700;color:var(--gold);
+}
+
+/* ====== ORDER FORM ====== */
+.order-form{margin-top:20px;padding-top:20px;border-top:1px solid var(--border)}
+.of-title{font-family:'Cormorant Garamond',serif;font-size:20px;margin-bottom:14px;color:var(--gold)}
+.of-label{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;margin-top:12px}
+.of-input{
+  width:100%;background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:13px 14px;
+  color:var(--text);font-family:inherit;font-size:14px;
+  outline:none;transition:all .25s var(--ease-out);
+}
+.of-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-glow)}
+.of-input::placeholder{color:var(--muted2)}
+textarea.of-input{resize:none}
+.pay-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.pay-opt{
+  background:var(--bg);border:1px solid var(--border);
+  border-radius:var(--radius-sm);padding:12px;text-align:center;
+  cursor:pointer;font-size:13px;transition:all .25s var(--ease-out);
+}
+.pay-opt:active{transform:scale(.96)}
+.pay-opt.sel{
+  border-color:var(--gold);background:var(--gold-glow);
+  color:var(--gold);font-weight:700;
+  box-shadow:0 2px 12px var(--gold-glow);
+}
+
+/* ====== AKSIYA CARDS ====== */
+.aksiya-card{
+  background:var(--card);border:1px solid rgba(231,76,60,.2);
+  border-radius:var(--radius);overflow:hidden;margin-bottom:14px;
+  animation:fade-in-up .4s var(--ease-out) both;
+  transition:all .3s var(--ease-out);
+}
+.aksiya-card:active{border-color:var(--danger);box-shadow:0 0 20px var(--danger-glow)}
+.aksiya-img{width:100%;height:130px;object-fit:cover;display:block}
+.aksiya-img-placeholder{
+  width:100%;height:130px;
+  background:linear-gradient(135deg,#1a0808,#2a1010);
+  display:flex;align-items:center;justify-content:center;font-size:32px;
+}
+.aksiya-body{padding:14px}
+.aksiya-discount-tag{
+  display:inline-block;background:linear-gradient(135deg,var(--danger),var(--crimson2));
+  color:#fff;font-size:11px;font-weight:800;
+  padding:4px 10px;border-radius:50px;margin-bottom:8px;
+}
+.aksiya-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:19px;font-weight:700;margin-bottom:3px;
+}
+.aksiya-cat{font-size:10px;color:var(--gold);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px}
+.aksiya-prices{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.aksiya-old{color:var(--muted);text-decoration:line-through;font-size:13px}
+.aksiya-new{color:var(--danger);font-size:17px;font-weight:800}
+.btn-aksiya-add{
+  width:100%;padding:12px;
+  background:linear-gradient(135deg,var(--danger),var(--crimson2));
+  border:none;border-radius:var(--radius-sm);
+  color:#fff;font-size:13px;font-weight:700;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;
+  transition:all .25s var(--ease-spring);
+}
+.btn-aksiya-add:active{transform:scale(.96)}
+
+/* ====== BRANCH CARDS ====== */
+.branch-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:16px;margin-bottom:12px;
+  animation:fade-in-up .4s var(--ease-out) both;
+  transition:all .3s var(--ease-out);
+}
+.branch-card:active{border-color:var(--gold);box-shadow:0 0 20px var(--gold-glow)}
+.branch-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:700;color:var(--gold);margin-bottom:8px;
+}
+.branch-info{font-size:12px;color:var(--muted);line-height:1.8}
+.branch-info i{color:var(--gold);width:18px;text-align:center;margin-right:6px}
+.branch-actions{display:flex;gap:8px;margin-top:12px}
+.branch-action-btn{
+  flex:1;padding:10px;
+  background:var(--gold-glow);border:1px solid rgba(201,168,76,.15);
+  border-radius:var(--radius-xs);color:var(--gold);
+  font-size:12px;font-weight:600;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  text-decoration:none;transition:all .25s var(--ease-out);
+}
+.branch-action-btn:active{transform:scale(.96);background:var(--gold);color:#000}
+
+/* ====== DELIVERY ZONES ====== */
+.dz-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:14px;margin-bottom:10px;
+  display:flex;align-items:flex-start;gap:12px;
+  animation:fade-in-up .4s var(--ease-out) both;
+}
+.dz-icon{
+  width:44px;height:44px;flex-shrink:0;
+  background:var(--gold-glow);border-radius:var(--radius-xs);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--gold);font-size:18px;
+}
+.dz-info{flex:1}
+.dz-name{font-weight:700;font-size:14px;margin-bottom:4px}
+.dz-meta{display:flex;gap:10px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.dz-meta i{color:var(--gold);margin-right:3px}
+.dz-fee{
+  background:var(--gold-glow);color:var(--gold);
+  padding:3px 8px;border-radius:50px;font-size:11px;font-weight:700;
+}
+.dz-min-order{font-size:10px;color:var(--muted);margin-top:4px}
+.dz-desc{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+.delivery-rules{
+  margin-top:16px;padding:14px;
+  background:var(--card);border-radius:var(--radius-sm);
+  border:1px solid var(--border);
+}
+.delivery-rules-title{font-size:13px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.delivery-rules-title i{color:var(--gold)}
+.delivery-rules li{
+  font-size:11px;color:var(--muted);line-height:1.8;
+  list-style:none;padding-left:4px;
+}
+
+/* ====== CHAT ====== */
+.chat-container{display:flex;flex-direction:column;height:calc(80vh - 140px);min-height:280px}
+.chat-messages{flex:1;overflow-y:auto;padding:8px 0}
+.chat-msg{display:flex;margin-bottom:8px;animation:scale-in .3s var(--ease-spring) both}
+.chat-msg.user{justify-content:flex-end}
+.chat-msg.cashier{justify-content:flex-start}
+.chat-bubble{
+  max-width:82%;padding:10px 14px;border-radius:16px;
+  font-size:13px;line-height:1.5;word-break:break-word;
+}
+.chat-msg.user .chat-bubble{
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  color:#000;border-bottom-right-radius:4px;
+}
+.chat-msg.cashier .chat-bubble{
+  background:var(--card2);color:var(--text);
+  border:1px solid var(--border);border-bottom-left-radius:4px;
+}
+.chat-time{font-size:9px;color:var(--muted);margin-top:3px}
+.chat-msg.user .chat-time{text-align:right}
+.chat-input-row{display:flex;gap:8px;padding-top:12px;border-top:1px solid var(--border)}
+.chat-input{
+  flex:1;background:var(--bg);border:1px solid var(--border);
+  border-radius:50px;padding:11px 16px;
+  color:var(--text);font-family:inherit;font-size:13px;outline:none;
+  transition:border-color .25s var(--ease-out);
+}
+.chat-input:focus{border-color:var(--gold)}
+.chat-send{
+  width:42px;height:42px;
+  background:linear-gradient(135deg,var(--gold),var(--gold2));
+  border:none;border-radius:50%;color:#000;font-size:15px;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .25s var(--ease-spring);
+}
+.chat-send:active{transform:scale(.88)}
+.chat-empty{text-align:center;padding:30px 16px;color:var(--muted)}
+.chat-empty i{font-size:32px;opacity:.25;margin-bottom:8px;display:block}
+.chat-hint{font-size:10px;color:var(--muted);text-align:center;margin-top:10px;opacity:.7}
+
+/* ====== EMPTY STATE ====== */
+.empty-state{text-align:center;padding:36px 16px;color:var(--muted)}
+.empty-state i{font-size:40px;opacity:.2;margin-bottom:10px;display:block}
+.empty-state p{font-size:13px}
+
+/* ====== TOAST ====== */
+.tg-toast{
+  position:fixed;bottom:120px;left:50%;transform:translateX(-50%);
+  background:var(--card2);border:1px solid var(--gold);
+  border-radius:50px;padding:10px 22px;
+  font-size:12px;font-weight:600;color:var(--text);
+  z-index:999;white-space:nowrap;
+  animation:toast-in .35s var(--ease-out);
+  box-shadow:0 4px 24px rgba(0,0,0,.4);
+}
+
+/* ====== STAGGER ANIMATION ====== */
+.meal-card:nth-child(1){animation-delay:.05s}
+.meal-card:nth-child(2){animation-delay:.1s}
+.meal-card:nth-child(3){animation-delay:.15s}
+.meal-card:nth-child(4){animation-delay:.2s}
+.meal-card:nth-child(5){animation-delay:.25s}
+.meal-card:nth-child(6){animation-delay:.3s}
+.meal-card:nth-child(7){animation-delay:.35s}
+.meal-card:nth-child(8){animation-delay:.4s}
+.cp-item:nth-child(1){animation-delay:.05s}
+.cp-item:nth-child(2){animation-delay:.1s}
+.cp-item:nth-child(3){animation-delay:.15s}
+.cp-item:nth-child(4){animation-delay:.2s}
+.cp-item:nth-child(5){animation-delay:.25s}
+.aksiya-card:nth-child(1){animation-delay:.05s}
+.aksiya-card:nth-child(2){animation-delay:.1s}
+.aksiya-card:nth-child(3){animation-delay:.15s}
+.branch-card:nth-child(1){animation-delay:.05s}
+.branch-card:nth-child(2){animation-delay:.1s}
+.dz-card:nth-child(1){animation-delay:.05s}
+.dz-card:nth-child(2){animation-delay:.1s}
+</style>
+</head>
+<body>
+
+<div class="tg-header">
+    <div class="tg-header-top">
+        <div class="tg-logo">AMINA</div>
+        <div class="header-btns">
+            <button class="hdr-btn" onclick="openPanel('aksiyalar')">
+                <i class="fas fa-fire"></i>
+            </button>
+            <button class="hdr-btn" onclick="openPanel('delivery')">
+                <i class="fas fa-truck"></i>
+            </button>
+            <button class="hdr-btn" onclick="openPanel('chat')">
+                <i class="fas fa-comments"></i>
+                <span class="badge-dot" id="chatBadge"></span>
+            </button>
+            <button class="hdr-btn" onclick="openPanel('filiallar')">
+                <i class="fas fa-location-dot"></i>
+            </button>
+            <button class="hdr-btn cart-badge-wrap" onclick="openPanel('cart')">
+                <i class="fas fa-bag-shopping"></i>
+                <span class="badge-dot" id="cartBadge"></span>
+            </button>
+        </div>
+    </div>
+    <div class="tg-search">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchInput" placeholder="Taom qidirish..." oninput="filterMeals()">
+    </div>
+</div>
+
+<div class="cats-row" id="catsRow">
+    <div class="cat-chip active" onclick="setCategory('all', this)">Hammasi</div>
+    {% for cat in categories %}
+    <div class="cat-chip" onclick="setCategory('{{ cat.id }}', this)">{{ cat.name }}</div>
+    {% endfor %}
+</div>
+
+<p class="section-lbl">Setlar</p>
+<div class="meals-section" style="margin-bottom:24px">
+    <div class="meals-grid">
+        {% for set_obj in sets %}
+        <div class="meal-card" data-cat="setlar" data-name="{{ set_obj.name|lower }}" data-id="set_{{ set_obj.id }}">
+            {% if set_obj.images.first %}
+            <img class="meal-img" src="{{ base_url }}{{ set_obj.images.first.image.url }}" alt="{{ set_obj.name }}"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            {% elif set_obj.image %}
+            <img class="meal-img" src="{{ base_url }}{{ set_obj.image.url }}" alt="{{ set_obj.name }}"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            {% else %}
+            {% endif %}
+            <div class="meal-img-placeholder" style="display:none">🍱</div>
+            {% if set_obj.discount_percent > 0 %}
+            <div class="discount-tag">-{{ set_obj.discount_percent }}%</div>
+            {% endif %}
+            <div class="meal-body">
+                <div class="meal-cat">SET · {{ set_obj.servings }} KISHI</div>
+                <div class="meal-name">{{ set_obj.name }}</div>
+                <div class="meal-desc">{{ set_obj.description|truncatewords:8 }}</div>
+                {% if set_obj.items_description %}
+                <div class="meal-items"><i class="fas fa-list-ul"></i>{{ set_obj.items_description|truncatechars:45 }}</div>
+                {% endif %}
+                {% if set_obj.highlights %}
+                <div class="meal-highlights">
+                    {% for h in set_obj.get_highlights_list|slice:":2" %}
+                    <span class="meal-highlight"><i class="fas fa-check"></i>{{ h }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if set_obj.preparation_time or set_obj.calories %}
+                <div class="meal-meta">
+                    {% if set_obj.preparation_time %}
+                    <span><i class="fas fa-clock"></i>{{ set_obj.preparation_time }}</span>
+                    {% endif %}
+                    {% if set_obj.calories %}
+                    <span><i class="fas fa-fire"></i>{{ set_obj.calories }} kcal</span>
+                    {% endif %}
+                </div>
+                {% endif %}
+                <div class="meal-footer">
+                    <div>
+                        {% if set_obj.old_price %}
+                        <div class="meal-price-old">{{ set_obj.old_price }} UZS</div>
+                        {% endif %}
+                        <div class="meal-price">{{ set_obj.price }} UZS</div>
+                    </div>
+                    <button class="btn-add" onclick="addToCart('set_{{ set_obj.id }}', '{{ set_obj.name }}', {{ set_obj.price }}, this)">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<p class="section-lbl">Menyu</p>
+<div class="meals-section">
+    <div class="meals-grid" id="mealsGrid">
+        {% for meal in meals %}
+        <div class="meal-card" data-cat="{{ meal.ctg.id }}" data-name="{{ meal.name|lower }}" data-id="{{ meal.id }}">
+            {% if meal.get_first_image %}
+            <img class="meal-img" src="{{ base_url }}{{ meal.get_first_image }}" alt="{{ meal.name }}"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="meal-img-placeholder" style="display:none">🍣</div>
+            {% else %}
+            <div class="meal-img-placeholder">🍣</div>
+            {% endif %}
+            {% if meal.discount > 0 %}
+            <div class="discount-tag">-{{ meal.discount }}%</div>
+            {% endif %}
+            <div class="meal-body">
+                <div class="meal-cat">{{ meal.ctg.name }}</div>
+                <div class="meal-name">{{ meal.name }}</div>
+                <div class="meal-desc">{{ meal.description|truncatewords:10 }}</div>
+                <div class="meal-footer">
+                    <div>
+                        {% if meal.discount > 0 %}
+                        <div class="meal-price-old">{{ meal.price|floatformat:0 }} UZS</div>
+                        {% endif %}
+                        <div class="meal-price">{{ meal.total_price }} UZS</div>
+                    </div>
+                    <button class="btn-add" id="add-{{ meal.id }}"
+                        onclick="addToCart('{{ meal.id }}', '{{ meal.name }}', {{ meal.total_price }}, this)">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ====== SAVAT PANEL ====== -->
+<div class="panel" id="panelCart">
+    <div class="panel-overlay" onclick="closeAllPanels()"></div>
+    <div class="panel-body">
+        <div class="panel-handle"></div>
+        <div class="panel-title">Savat <em></em></div>
+        <div id="cartItems"></div>
+        <div class="order-form" id="orderForm" style="display:none">
+            <div class="of-title">Buyurtma ma'lumotlari</div>
+            <div class="of-label">Ismingiz</div>
+            <input class="of-input" id="ofName" type="text" placeholder="Ismingiz">
+            <div class="of-label">Telefon raqamingiz</div>
+            <input class="of-input" id="ofPhone" type="tel" placeholder="+998 90 123 45 67">
+            <div class="of-label">Yetkazib berish manzili</div>
+            <textarea class="of-input" id="ofAddress" placeholder="Manzil" rows="3"></textarea>
+            {% if branches %}
+            <div class="of-label"><i class="fas fa-store" style="color:var(--gold);margin-right:6px"></i>Filialni tanlang</div>
+            <select class="of-input" id="ofBranch" style="padding:11px 14px">
+                <option value="">— Filial tanlang —</option>
+                {% for b in branches %}
+                <option value="{{ b.id }}">{{ b.name }}</option>
+                {% endfor %}
+            </select>
+            {% endif %}
+            <div class="of-label">To'lov usuli</div>
+            <div class="pay-row">
+                <div class="pay-opt sel" onclick="selPay(this,'cash')">💵 Naqd</div>
+                <div class="pay-opt" onclick="selPay(this,'card')">💳 Karta</div>
+                <div class="pay-opt" onclick="selPay(this,'click')">📱 Click</div>
+                <div class="pay-opt" onclick="selPay(this,'payme')">💎 Payme</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ====== AKSIYALAR PANEL ====== -->
+<div class="panel" id="panelAksiyalar">
+    <div class="panel-overlay" onclick="closeAllPanels()"></div>
+    <div class="panel-body">
+        <div class="panel-handle"></div>
+        <div class="panel-title">Aksiyalar <em></em></div>
+        {% if aksiyalar %}
+        {% for aksiya in aksiyalar %}
+        <div class="aksiya-card">
+            {% if aksiya.meal.get_first_image %}
+            <img class="aksiya-img" src="{{ base_url }}{{ aksiya.meal.get_first_image }}" alt="{{ aksiya.meal.name }}"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+            <div class="aksiya-img-placeholder" style="display:none">🍣</div>
+            {% else %}
+            <div class="aksiya-img-placeholder">🍣</div>
+            {% endif %}
+            <div class="aksiya-body">
+                <span class="aksiya-discount-tag">-{{ aksiya.discount }}%</span>
+                <div class="aksiya-cat">{{ aksiya.meal.ctg.name }}</div>
+                <div class="aksiya-name">{{ aksiya.meal.name }}</div>
+                <div class="aksiya-prices">
+                    <span class="aksiya-old">{{ aksiya.meal.price|floatformat:0 }} UZS</span>
+                    <span class="aksiya-new">{{ aksiya.meal.get_final_price }} UZS</span>
+                </div>
+                <button class="btn-aksiya-add" onclick="addToCart('{{ aksiya.meal.id }}', '{{ aksiya.meal.name }}', {{ aksiya.meal.get_final_price }}, this); closeAllPanels();">
+                    <i class="fas fa-cart-plus"></i> Savatga qo'shish
+                </button>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state"><i class="fas fa-fire"></i><p>Hozircha aksiyalar yo'q</p></div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ====== FILIALLAR PANEL ====== -->
+<div class="panel" id="panelFiliallar">
+    <div class="panel-overlay" onclick="closeAllPanels()"></div>
+    <div class="panel-body">
+        <div class="panel-handle"></div>
+        <div class="panel-title">Filiallar <em></em></div>
+        {% if branches %}
+        {% for branch in branches %}
+        {% load l10n %}
+        <div class="branch-card">
+            <div class="branch-name">{{ branch.name }}</div>
+            <div class="branch-info">
+                <div><i class="fas fa-map-marker-alt"></i> {{ branch.location_name }}</div>
+                <div><i class="fas fa-phone"></i> {{ branch.phone }}</div>
+                {% if branch.manager %}
+                <div><i class="fas fa-user-tie"></i> {{ branch.manager.name }}</div>
+                {% endif %}
+            </div>
+            <div class="branch-actions">
+                <a class="branch-action-btn" href="tel:{{ branch.phone }}">
+                    <i class="fas fa-phone"></i> Qo'ng'iroq
+                </a>
+                <a class="branch-action-btn" href="https://www.google.com/maps?q={% localize off %}{{ branch.location.lat }},{{ branch.location.lng }}{% endlocalize %}" target="_blank">
+                    <i class="fas fa-directions"></i> Marshrut
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state"><i class="fas fa-location-dot"></i><p>Filiallar topilmadi</p></div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ====== YETKAZIB BERISH PANEL ====== -->
+<div class="panel" id="panelDelivery">
+    <div class="panel-overlay" onclick="closeAllPanels()"></div>
+    <div class="panel-body">
+        <div class="panel-handle"></div>
+        <div class="panel-title">Yetkazib berish <em></em></div>
+        {% if delivery_zones %}
+        {% for zone in delivery_zones %}
+        <div class="dz-card">
+            <div class="dz-icon"><i class="fas fa-map-marker-alt"></i></div>
+            <div class="dz-info">
+                <div class="dz-name">{{ zone.name }}</div>
+                <div class="dz-meta">
+                    <span><i class="fas fa-clock"></i> {{ zone.estimated_time }}</span>
+                    <span class="dz-fee">{{ zone.delivery_fee|floatformat:0 }} UZS</span>
+                </div>
+                <div class="dz-min-order">Minimal: {{ zone.min_order|floatformat:0 }} UZS</div>
+                {% if zone.description %}
+                <div class="dz-desc">{{ zone.description }}</div>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state"><i class="fas fa-truck"></i><p>Hududlar topilmadi</p></div>
+        {% endif %}
+        <div class="delivery-rules">
+            <div class="delivery-rules-title"><i class="fas fa-info-circle"></i> Qoidalar</div>
+            <ul>
+                <li>Buyurtma 30–50 daqiqada yetkaziladi</li>
+                <li>Narx hududga qarab o'zgaradi</li>
+                <li>Minimal buyurtma summasi ko'rsatilgan</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ====== CHAT PANEL ====== -->
+<div class="panel" id="panelChat">
+    <div class="panel-overlay" onclick="closeAllPanels()"></div>
+    <div class="panel-body">
+        <div class="panel-handle"></div>
+        <div class="panel-title">Kassir bilan chat <em></em></div>
+        <div class="chat-container">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-empty" id="chatEmpty">
+                    <i class="fas fa-comments"></i>
+                    <p>Xabar yuborishni boshlang</p>
+                </div>
+            </div>
+            <div class="chat-input-row">
+                <input class="chat-input" id="chatInput" type="text" placeholder="Xabar yozing..." onkeydown="if(event.key==='Enter')sendChat()">
+                <button class="chat-send" onclick="sendChat()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+            <div class="chat-hint">Kassir @chat_amina_bot orqali javob beradi</div>
+        </div>
+    </div>
+</div>
+
+<!-- Bottom bar -->
+<div class="bottom-bar" id="bottomBar" style="display:none">
+    <button class="btn-order" id="mainBtn" onclick="mainAction()">
+        <i class="fas fa-bag-shopping"></i>
+        <span id="mainBtnText">Savatni ko'rish</span>
+    </button>
+</div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#050505'); }
+
+let cart = [];
+let currentPayment = 'cash';
+let panelOpen = null;
+let chatTgId = tg?.initDataUnsafe?.user?.id || null;
+let chatName = tg?.initDataUnsafe?.user?.first_name || '';
+let chatInterval = null;
+
+function openPanel(name) {
+    if (panelOpen) closeAllPanels();
+    const map = { cart: 'panelCart', aksiyalar: 'panelAksiyalar', filiallar: 'panelFiliallar', delivery: 'panelDelivery', chat: 'panelChat' };
+    const el = document.getElementById(map[name]);
+    if (!el) return;
+    if (name === 'cart') renderCartPanel();
+    if (name === 'chat') { loadChatHistory(); const b = document.getElementById('chatBadge'); b.textContent = ''; b.dataset.count = '0'; }
+    setTimeout(() => { el.classList.add('open'); panelOpen = name; }, 10);
+}
+
+function closeAllPanels() {
+    document.querySelectorAll('.panel.open').forEach(p => p.classList.remove('open'));
+    panelOpen = null;
+    if (chatInterval) { clearInterval(chatInterval); chatInterval = null; }
+}
+
+function addToCart(id, name, price, btn) {
+    const existing = cart.find(i => i.id === id);
+    if (existing) existing.qty++;
+    else cart.push({ id, name, price: parseInt(price), qty: 1 });
+    if (btn) {
+        btn.classList.add('added');
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        setTimeout(() => { btn.classList.remove('added'); btn.innerHTML = '<i class="fas fa-plus"></i>'; }, 800);
+    }
+    updateBadge();
+    showToast(`${name} savatga qo'shildi`);
+}
+
+function updateBadge() {
+    const count = cart.reduce((s, i) => s + i.qty, 0);
+    const badge = document.getElementById('cartBadge');
+    badge.textContent = count || '';
+    badge.dataset.count = count;
+    const bar = document.getElementById('bottomBar');
+    bar.style.display = count > 0 ? 'block' : 'none';
+    if (count > 0) {
+        const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+        document.getElementById('mainBtnText').textContent = `Savatni ko'rish · ${total.toLocaleString()} UZS`;
+    }
+}
+
+function renderCartPanel() {
+    const container = document.getElementById('cartItems');
+    const formEl = document.getElementById('orderForm');
+    if (!cart.length) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-bag-shopping"></i><p>Savat bo\'sh</p></div>';
+        formEl.style.display = 'none';
+        return;
+    }
+    formEl.style.display = 'block';
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    container.innerHTML = cart.map((item, idx) => `
+        <div class="cp-item" style="animation-delay:${idx * .06}s">
+            <div class="cp-icon"><i class="fas fa-utensils"></i></div>
+            <div class="cp-info">
+                <div class="cp-name">${item.name}</div>
+                <div class="cp-price">${(item.price * item.qty).toLocaleString()} UZS</div>
+            </div>
+            <div class="cp-ctrl">
+                <button class="cp-btn" onclick="cpQty(${idx},-1)">−</button>
+                <span class="cp-qty">${item.qty}</span>
+                <button class="cp-btn" onclick="cpQty(${idx},1)">+</button>
+                <button class="cp-btn cp-del" onclick="cpRemove(${idx})"><i class="fas fa-xmark"></i></button>
+            </div>
+        </div>
+    `).join('') + `
+    <div class="cart-total-row">
+        <span class="cart-total-lbl">Jami:</span>
+        <span class="cart-total-val">${total.toLocaleString()} UZS</span>
+    </div>`;
+    if (tg?.initDataUnsafe?.user) {
+        const u = tg.initDataUnsafe.user;
+        const nameEl = document.getElementById('ofName');
+        if (!nameEl.value && u.first_name) nameEl.value = u.first_name + (u.last_name ? ' ' + u.last_name : '');
+    }
+    document.getElementById('mainBtn').innerHTML = '<i class="fas fa-check"></i><span>Buyurtmani tasdiqlash</span>';
+    document.getElementById('mainBtn').onclick = submitOrder;
+}
+
+function cpQty(idx, d) { cart[idx].qty += d; if (cart[idx].qty < 1) cart[idx].qty = 1; renderCartPanel(); updateBadge(); }
+function cpRemove(idx) { cart.splice(idx, 1); renderCartPanel(); updateBadge(); if (!cart.length) closeAllPanels(); }
+
+function mainAction() {
+    if (panelOpen !== 'cart') openPanel('cart');
+    else submitOrder();
+}
+
+function selPay(el, val) {
+    document.querySelectorAll('.pay-opt').forEach(p => p.classList.remove('sel'));
+    el.classList.add('sel'); currentPayment = val;
+}
+
+function submitOrder() {
+    const name = document.getElementById('ofName').value.trim();
+    const phone = document.getElementById('ofPhone').value.trim();
+    const address = document.getElementById('ofAddress').value.trim();
+    const branchSelect = document.getElementById('ofBranch');
+    const branchId = branchSelect ? parseInt(branchSelect.value) || null : null;
+    if (!name || !phone || !address) { showToast("Barcha maydonlarni to'ldiring!"); return; }
+    const total = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const tgId = tg?.initDataUnsafe?.user?.id || null;
+    const btn = document.getElementById('mainBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Yuborilmoqda...</span>';
+    fetch('/cart/order/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+            name, phone, address, total_amount: total,
+            payment_method: currentPayment, source: 'tg_webapp', tg_id: tgId,
+            items: cart.map(i => ({ name: i.name, price: i.price, qty: i.qty })),
+            branch_id: branchId
+        })
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.success) {
+            cart = []; closeAllPanels(); updateBadge();
+            if (tg) tg.showAlert('🎉 Buyurtmangiz qabul qilindi!\n\nTez orada operator aloqaga chiqadi.\n\n⏱ Yetkazib berish: 30–50 daqiqa', () => tg.close());
+            else showToast('Buyurtma qabul qilindi!');
+        } else { showToast("Xatolik yuz berdi."); btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i><span>Buyurtmani tasdiqlash</span>'; }
+    })
+    .catch(() => { showToast("Internet xatosi."); btn.disabled = false; btn.innerHTML = '<i class="fas fa-check"></i><span>Buyurtmani tasdiqlash</span>'; });
+}
+
+function setCategory(catId, el) {
+    document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+    document.querySelectorAll('.meal-card').forEach(card => {
+        const match = catId === 'all' || card.dataset.cat === catId;
+        card.style.display = match ? 'block' : 'none';
+    });
+}
+
+function filterMeals() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.meal-card').forEach(card => {
+        card.style.display = card.dataset.name.includes(q) ? 'block' : 'none';
+    });
+}
+
+function showToast(msg) {
+    document.querySelectorAll('.tg-toast').forEach(t => t.remove());
+    const t = document.createElement('div');
+    t.className = 'tg-toast'; t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 2500);
+}
+
+function loadChatHistory() {
+    if (!chatTgId) return;
+    fetch(`/api/chat/history/?tg_id=${chatTgId}`)
+    .then(r => r.json())
+    .then(data => {
+        if (data.messages && data.messages.length > 0) {
+            const container = document.getElementById('chatMessages');
+            const empty = document.getElementById('chatEmpty');
+            if (empty) empty.style.display = 'none';
+            container.innerHTML = data.messages.map(m => `
+                <div class="chat-msg ${m.sender}">
+                    <div>
+                        <div class="chat-bubble">${m.text}</div>
+                        <div class="chat-time">${new Date(m.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</div>
+                    </div>
+                </div>
+            `).join('');
+            container.scrollTop = container.scrollHeight;
+        }
+        if (data.unread > 0) {
+            const badge = document.getElementById('chatBadge');
+            badge.textContent = data.unread; badge.dataset.count = data.unread;
+        }
+        if (!chatInterval) chatInterval = setInterval(loadChatHistory, 5000);
+    })
+    .catch(() => {});
+}
+
+function sendChat() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    const container = document.getElementById('chatMessages');
+    const empty = document.getElementById('chatEmpty');
+    if (empty) empty.style.display = 'none';
+    const time = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    container.innerHTML += `
+        <div class="chat-msg user">
+            <div><div class="chat-bubble">${text}</div><div class="chat-time">${time}</div></div>
+        </div>`;
+    container.scrollTop = container.scrollHeight;
+    fetch('/api/chat/send/', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tg_id: chatTgId, name: chatName, text })
+    })
+    .then(r => r.json())
+    .then(data => { if (!data.success) showToast("Xatolik yuz berdi"); })
+    .catch(() => showToast("Internet xatosi"));
+    if (!chatInterval) chatInterval = setInterval(loadChatHistory, 5000);
+}
+</script>
+</body>
+</html>

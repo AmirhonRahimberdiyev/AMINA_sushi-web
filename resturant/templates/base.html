@@ -1,0 +1,256 @@
+
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AMINA | Premium Sushi{% endblock %}</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@200;300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    {% block extra_head %}{% endblock %}
+    {% block extra_styles %}{% endblock %}
+</head>
+<body class="no-scroll">
+
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-follower" id="cursorFollower"></div>
+
+    <div class="preloader" id="preloader">
+        <div class="preloader-inner">
+            <svg class="preloader-logo" viewBox="0 0 140 140">
+                <circle cx="70" cy="70" r="60" fill="none" stroke="rgba(201,168,76,0.15)" stroke-width="1"/>
+                <circle cx="70" cy="70" r="60" fill="none" stroke="var(--gold)" stroke-width="1.5"
+                        stroke-dasharray="377" stroke-dashoffset="377" class="circle-anim"
+                        stroke-linecap="round" transform="rotate(-90 70 70)"/>
+                <text x="70" y="78" text-anchor="middle" font-family="var(--font-jp)"
+                      font-size="40" fill="var(--gold)" font-weight="300">味</text>
+            </svg>
+            <div class="preloader-bar">
+                <div class="preloader-fill" id="preloaderFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="/" class="logo">
+                <span class="logo-jp">味</span>
+                <div class="logo-divider"></div>
+                <span class="logo-text">AMINA<span class="logo-dot">.</span></span>
+            </a>
+
+            <div class="nav-center">
+                <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}">Asosiy</a>
+                <a href="/menyu" class="nav-link {% if '/menyu' in request.path %}active{% endif %}">Menyu</a>
+                <a href="/aksiyalar" class="nav-link {% if '/aksiyalar' in request.path %}active{% endif %}">Aksiyalar</a>
+                <a href="/filiallar" class="nav-link {% if '/filiallar' in request.path %}active{% endif %}">Filiallar</a>
+                <a href="/delivery" class="nav-link {% if '/delivery' in request.path %}active{% endif %}">Yetkazish</a>
+            </div>
+
+            <div class="nav-right">
+                <a href="/cart" class="nav-cart">
+                    <div class="cart-icon-wrap">
+                        <i class="fas fa-bag-shopping"></i>
+                        <span class="cart-badge" id="cartBadge">0</span>
+                    </div>
+                    <span class="nav-cart-text">Savat</span>
+                </a>
+                <button class="burger" id="burger" aria-label="Menu">
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="mobile-menu" id="mobileMenu">
+        <div class="mobile-menu-inner">
+            <a href="/" class="mobile-link {% if request.path == '/' %}active{% endif %}">Asosiy <span>01</span></a>
+            <a href="/menyu" class="mobile-link {% if '/menyu' in request.path %}active{% endif %}">Menyu <span>02</span></a>
+            <a href="/aksiyalar" class="mobile-link {% if '/aksiyalar' in request.path %}active{% endif %}">Aksiyalar <span>03</span></a>
+            <a href="/filiallar" class="mobile-link {% if '/filiallar' in request.path %}active{% endif %}">Filiallar <span>04</span></a>
+            <a href="/delivery" class="mobile-link {% if '/delivery' in request.path %}active{% endif %}">Yetkazish <span>05</span></a>
+            <div class="mobile-social">
+                <a href="https://www.instagram.com/sushi_by_amina.uz/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                <a href="https://t.me/no_oneew" target="_blank" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+                <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <main id="mainContent">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-top">
+            <div class="footer-brand-col">
+                <div class="footer-logo">
+                    <span class="footer-jp">寿司の芸術</span>
+                    <h2>AMINA<span>.</span></h2>
+                </div>
+                <p>Toshkentdagi eng nafis yapon oshxonasi. Har bir taom — mukammallikka intilish natijasi. An'anaviy yapon madaniyati va zamonaviy san'at uyg'unligi.</p>
+                <div class="footer-social">
+                    <a href="https://www.instagram.com/sushi_by_amina.uz/" class="social-pill" target="_blank">
+                        <i class="fab fa-instagram"></i> Instagram
+                    </a>
+                    <a href="https://t.me/no_oneew" class="social-pill" target="_blank">
+                        <i class="fab fa-telegram"></i> Telegram
+                    </a>
+                </div>
+            </div>
+            <div class="footer-links-col">
+                <h4>Sahifalar</h4>
+                <a href="/">Asosiy</a>
+                <a href="/menyu">Menyu</a>
+                <a href="/aksiyalar">Aksiyalar</a>
+                <a href="/filiallar">Filiallar</a>
+                <a href="/delivery">Yetkazib berish</a>
+            </div>
+            <div class="footer-contact-col">
+                <h4>Aloqa</h4>
+                <p><i class="fas fa-clock"></i> Du–Ju: 10:00–23:00</p>
+                <p><i class="fas fa-clock"></i> Sh: 11:00–00:00</p>
+                <p><i class="fas fa-phone"></i> +998 90 123 45 67</p>
+                <p><i class="fas fa-location-dot"></i> Toshkent, O'zbekiston</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 AMINA Premium Sushi. Barcha huquqlar himoyalangan.</p>
+            <p>Umami with &#10084;</p>
+        </div>
+    </footer>
+
+    <script>
+        // ── Preloader ──
+        const preloader = document.getElementById('preloader');
+        const preloaderFill = document.getElementById('preloaderFill');
+        let progress = 0;
+        const preloadInterval = setInterval(() => {
+            progress += Math.random() * 35 + 15;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(preloadInterval);
+                setTimeout(() => {
+                    preloader.classList.add('done');
+                    document.body.classList.add('loaded');
+                    document.body.classList.remove('no-scroll');
+                }, 300);
+            }
+            if (preloaderFill) preloaderFill.style.width = progress + '%';
+        }, 100);
+
+        // Safety timeout — max 3s
+        setTimeout(() => {
+            preloader.classList.add('done');
+            document.body.classList.add('loaded');
+            document.body.classList.remove('no-scroll');
+        }, 3000);
+
+        // ── Custom Cursor ──
+        const cursor = document.getElementById('cursor');
+        const follower = document.getElementById('cursorFollower');
+        let mouseX = 0, mouseY = 0, fX = 0, fY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+        });
+
+        function animateFollower() {
+            fX += (mouseX - fX) * 0.12;
+            fY += (mouseY - fY) * 0.12;
+            follower.style.left = fX + 'px';
+            follower.style.top = fY + 'px';
+            requestAnimationFrame(animateFollower);
+        }
+        animateFollower();
+
+        function setupCursor() {
+            document.querySelectorAll('a, button, .nav-cart, .nav-link, .meal-add-btn, .cat-pill, input, textarea, select').forEach(el => {
+                el.addEventListener('mouseenter', () => { cursor.classList.add('hover'); follower.classList.add('hover'); });
+                el.addEventListener('mouseleave', () => { cursor.classList.remove('hover'); follower.classList.remove('hover'); });
+            });
+        }
+        setupCursor();
+
+        // ── Navbar Scroll ──
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // ── Mobile Menu ──
+        const burger = document.getElementById('burger');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (burger && mobileMenu) {
+            burger.addEventListener('click', () => {
+                const isOpen = mobileMenu.classList.toggle('open');
+                burger.classList.toggle('open');
+                document.body.classList.toggle('no-scroll', isOpen);
+            });
+
+            document.querySelectorAll('.mobile-link').forEach(link => {
+                link.addEventListener('click', () => {
+                    burger.classList.remove('open');
+                    mobileMenu.classList.remove('open');
+                    document.body.classList.remove('no-scroll');
+                });
+            });
+
+            mobileMenu.addEventListener('click', (e) => {
+                if (e.target === mobileMenu) {
+                    burger.classList.remove('open');
+                    mobileMenu.classList.remove('open');
+                    document.body.classList.remove('no-scroll');
+                }
+            });
+        }
+
+        // ── Cart Badge ──
+        function updateCartBadge() {
+            const cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const badge = document.getElementById('cartBadge');
+            if (badge) {
+                const totalItems = cart.reduce((sum, item) => sum + (item.qty || 1), 0);
+                badge.textContent = totalItems;
+                badge.style.display = totalItems > 0 ? 'flex' : 'none';
+            }
+        }
+
+        // ── Scroll Reveal ──
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // ── Init ──
+        document.addEventListener('DOMContentLoaded', () => {
+            updateCartBadge();
+            setupCursor();
+            // Re-observe dynamic elements
+            setTimeout(() => {
+                document.querySelectorAll('.reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+                setupCursor();
+            }, 200);
+        });
+    </script>
+
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

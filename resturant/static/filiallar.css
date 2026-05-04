@@ -1,0 +1,305 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f8f9fa;
+}
+
+/* ===================== NAVBAR ===================== */
+nav {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    padding: 16px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border-bottom: 1px solid #eee;
+}
+
+.nav-logo {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #FF0000;
+    letter-spacing: 2px;
+}
+
+.nav-links {
+    display: flex;
+    gap: 30px;
+}
+
+.nav-links a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.05rem;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.nav-links a:hover {
+    color: #FF0000;
+}
+
+.nav-links a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #FF0000;
+    transition: width 0.3s ease;
+}
+
+.nav-links a:hover::after {
+    width: 100%;
+}
+
+/* ===================== HERO SECTION ===================== */
+header {
+    background-color: #1e1e1e;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5%;
+    color: white;
+    margin-top: 70px;   /* navbar balandligi uchun */
+}
+
+.hero-content {
+    max-width: 1400px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+}
+
+.side-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.side-image img {
+    max-height: 68vh;
+    width: auto;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6);
+    object-fit: contain;
+}
+
+.center-text {
+    flex: 1.2;
+    text-align: center;
+    z-index: 2;
+}
+
+.logo {
+    font-size: 6.2rem;
+    font-weight: 900;
+    color: #FFCC00;
+    text-shadow: 0 6px 25px rgba(0, 0, 0, 0.8);
+    margin-bottom: 12px;
+    letter-spacing: 4px;
+}
+
+h3 {
+    font-size: 2.4rem;
+    letter-spacing: 12px;
+    margin-bottom: 25px;
+    opacity: 0.95;
+    font-weight: 400;
+}
+
+.slogan {
+    font-size: 2.1rem;
+    margin-bottom: 45px;
+    text-shadow: 0 3px 15px rgba(0, 0, 0, 0.7);
+}
+
+.btn {
+    display: inline-block;
+    background: #FF0000;
+    color: white;
+    padding: 18px 60px;
+    font-size: 1.55rem;
+    border-radius: 50px;
+    text-decoration: none;
+    box-shadow: 0 10px 30px rgba(255, 0, 0, 0.45);
+    transition: all 0.4s ease;
+    font-weight: 600;
+}
+
+.btn:hover {
+    background: #cc0000;
+    transform: translateY(-6px);
+    box-shadow: 0 15px 35px rgba(255, 0, 0, 0.6);
+}
+
+/* ===================== FILIAL HERO ===================== */
+.filial-hero {
+    background: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)),
+                url('https://via.placeholder.com/1920x500?text=EVOS+Filiallar') center/cover;
+    height: 45vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    margin-top: 70px;
+}
+
+.filial-hero h1 {
+    font-size: 3.8rem;
+    color: #FFCC00;
+    text-shadow: 0 4px 15px rgba(0,0,0,0.7);
+}
+
+/* ===================== FILIAL GRID ===================== */
+.filial-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+    gap: 25px;
+    padding: 60px 5%;
+}
+
+.filial-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.filial-card:hover {
+    transform: translateY(-8px);
+}
+
+.filial-top {
+    background: #FF0000;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.filial-top h3 {
+    margin: 0;
+    font-size: 1.6rem;
+}
+
+.manager {
+    margin: 8px 0 0 0;
+    opacity: 0.9;
+    font-size: 0.95rem;
+}
+
+.filial-body {
+    padding: 25px;
+}
+
+.info-item {
+    margin-bottom: 18px;
+}
+
+.info-item strong {
+    display: block;
+    color: #555;
+    margin-bottom: 4px;
+}
+
+.btn-map {
+    display: block;
+    background: #FF0000;
+    color: white;
+    text-align: center;
+    padding: 14px;
+    text-decoration: none;
+    border-radius: 50px;
+    margin: 10px 20px 20px;
+    font-weight: 500;
+}
+
+.btn-map:hover {
+    background: #cc0000;
+}
+
+/* ===================== UMUMIY BO'LIMLAR ===================== */
+section {
+    padding: 80px 5%;
+}
+
+h2 {
+    text-align: center;
+    font-size: 2.8rem;
+    margin-bottom: 50px;
+    color: #FF0000;
+    font-weight: 700;
+}
+
+/* Menu Grid */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+}
+
+.menu-card {
+    background: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s;
+}
+
+.menu-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0,0,0,0.12);
+}
+
+.menu-card img {
+    width: 100%;
+    height: 230px;
+    object-fit: cover;
+}
+
+.menu-info {
+    padding: 20px;
+    text-align: center;
+}
+
+.price {
+    font-size: 1.45rem;
+    font-weight: bold;
+    color: #FF0000;
+    margin-top: 12px;
+}
+
+/* About */
+.about {
+    background: #f8f9fa;
+    text-align: center;
+}
+
+/* Footer */
+footer {
+    background: #1e1e1e;
+    color: white;
+    text-align: center;
+    padding: 50px 5% 30px;
+}
+
+.footer

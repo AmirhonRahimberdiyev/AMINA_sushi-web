@@ -1,0 +1,456 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Aksiyalar — AMINA Premium Sushi{% endblock %}
+
+{% block extra_styles %}
+<style>
+.sale-section {
+    padding: calc(var(--nav-h) + 60px) 0 100px;
+    min-height: 100vh;
+    position: relative;
+}
+
+.sale-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 500px;
+    background: radial-gradient(ellipse at 50% 0%, var(--red-glow) 0%, transparent 70%);
+    pointer-events: none;
+    animation: saleBgPulse 8s ease-in-out infinite;
+}
+
+@keyframes saleBgPulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+}
+
+.sale-header {
+    text-align: center;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+}
+
+.sale-header .section-eyebrow { justify-content: center; }
+
+/* ── Countdown ── */
+.countdown-bar {
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-lg);
+    padding: 28px;
+    margin-bottom: 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.countdown-bar::before {
+    content: '';
+    position: absolute;
+    top: 0; left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(201, 168, 76, 0.03), transparent);
+    animation: shimmerSweep 4s infinite;
+}
+
+@keyframes shimmerSweep {
+    to { transform: translateX(300%); }
+}
+
+.countdown-title {
+    font-family: var(--font-serif);
+    font-size: 20px;
+    margin-bottom: 18px;
+    color: var(--snow);
+}
+
+.countdown-title em { color: var(--gold); font-style: italic; }
+
+.countdown-timer {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    flex-wrap: wrap;
+}
+
+.cd-item {
+    text-align: center;
+    position: relative;
+}
+
+.cd-num {
+    font-family: var(--font-serif);
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+    display: block;
+    transition: transform 0.3s var(--spring);
+}
+
+.cd-num.tick {
+    animation: cdTick 0.4s var(--spring);
+}
+
+@keyframes cdTick {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.cd-label {
+    font-size: 11px;
+    color: var(--mist);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 6px;
+    display: block;
+}
+
+/* ── Sale Grid ── */
+.sale-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+.sale-card {
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    transition: all 0.5s var(--ease-out);
+    position: relative;
+}
+
+.sale-card:hover {
+    transform: translateY(-12px);
+    border-color: var(--gold-dim);
+    box-shadow: 0 24px 64px rgba(201, 168, 76, 0.1), 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.sale-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.04) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    border-radius: var(--r-xl);
+}
+
+.sale-card:hover::after { opacity: 1; }
+
+.sale-img {
+    position: relative;
+    height: 260px;
+    overflow: hidden;
+}
+
+.sale-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 50%, rgba(5,5,5,0.5));
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s;
+}
+
+.sale-card:hover .sale-img::after { opacity: 1; }
+
+.sale-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1s var(--ease-out);
+}
+
+.sale-card:hover .sale-img img { transform: scale(1.08); }
+
+.sale-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: var(--red);
+    color: #fff;
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    border-radius: 50px;
+    z-index: 2;
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(231, 76, 60, 0); }
+}
+
+.sale-timer {
+    position: absolute;
+    bottom: 14px;
+    right: 14px;
+    background: rgba(5,5,5,0.85);
+    backdrop-filter: blur(10px);
+    padding: 8px 14px;
+    border-radius: var(--r-sm);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gold);
+    z-index: 2;
+}
+
+.sale-timer i { animation: timerPulse 1.5s infinite; }
+
+@keyframes timerPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
+.sale-body {
+    padding: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+.sale-cat {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 500;
+}
+
+.sale-name {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--snow);
+    transition: color 0.3s;
+}
+
+.sale-card:hover .sale-name { color: var(--gold); }
+
+.sale-desc {
+    color: var(--mist);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.sale-prices {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+
+.sale-prices .price-new {
+    transition: transform 0.3s var(--spring);
+}
+
+.sale-card:hover .sale-prices .price-new { transform: scale(1.05); }
+
+.sale-btn {
+    width: 100%;
+    padding: 15px;
+    background: var(--gold);
+    color: var(--void);
+    border: none;
+    border-radius: var(--r-sm);
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s var(--ease-out);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: var(--font-sans);
+    position: relative;
+    overflow: hidden;
+}
+
+.sale-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+}
+
+.sale-btn:hover::before {
+    animation: shimmerSweep 0.6s var(--ease-out);
+}
+
+.sale-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 36px var(--gold-glow-strong);
+}
+
+.sale-btn i { transition: transform 0.3s var(--ease-out); }
+.sale-btn:hover i { transform: translateX(4px); }
+
+.empty-sale {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--mist);
+}
+
+.empty-sale i { font-size: 48px; opacity: 0.3; margin-bottom: 18px; display: block; animation: float 3s ease-in-out infinite; }
+
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+@media (max-width: 768px) {
+    .sale-grid { grid-template-columns: 1fr; }
+    .sale-img { height: 200px; }
+    .cd-num { font-size: 32px; }
+    .countdown-timer { gap: 18px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="sale-section">
+    <div class="container">
+        <div class="sale-header">
+            <div class="section-eyebrow">
+                <span class="section-jp">セール</span>
+                <span class="section-line"></span>
+                <span class="section-num">02</span>
+            </div>
+            <h1 class="section-title">Ajoyib <em>Aksiyalar</em></h1>
+            <p class="section-sub" style="margin: 0 auto;">Chegirmalar va maxsus takliflar</p>
+        </div>
+
+        <div class="countdown-bar reveal">
+            <h3 class="countdown-title">Yangi aksiya boshlanishiga <em>qoldi</em>:</h3>
+            <div class="countdown-timer" id="countdown">
+                <div class="cd-item"><span class="cd-num" id="days">00</span><span class="cd-label">Kun</span></div>
+                <div class="cd-item"><span class="cd-num" id="hours">00</span><span class="cd-label">Soat</span></div>
+                <div class="cd-item"><span class="cd-num" id="minutes">00</span><span class="cd-label">Daqiqa</span></div>
+                <div class="cd-item"><span class="cd-num" id="seconds">00</span><span class="cd-label">Soniya</span></div>
+            </div>
+        </div>
+
+        <div class="sale-grid stagger-children">
+            {% for a in aksiyalar %}
+            <div class="sale-card reveal">
+                <div class="sale-img">
+                    {% if a.meal.images.first %}
+                    <img src="{{ a.meal.images.first.image.url }}" alt="{{ a.meal.name }}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400';this.onerror=null;">
+                    {% else %}
+                    <img src="{% static 'images/default-meal.jpg' %}" alt="{{ a.meal.name }}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400';this.onerror=null;">
+                    {% endif %}
+                    <div class="sale-badge">-{{ a.discount }}%</div>
+                    <div class="sale-timer"><i class="fas fa-clock"></i> {{ a.end_date|date:"d.m.Y" }} gacha</div>
+                </div>
+                <div class="sale-body">
+                    <div class="sale-cat">{{ a.meal.ctg.name }}</div>
+                    <h3 class="sale-name">{{ a.meal.name }}</h3>
+                    <p class="sale-desc">{{ a.meal.description|truncatewords:18 }}</p>
+                    <div class="sale-prices">
+                        <span class="price-old">{{ a.meal.price }} UZS</span>
+                        <span class="price-new">{{ a.meal.get_final_price }} UZS</span>
+                        <span class="tag" style="background:var(--red);color:#fff;border-color:var(--red);">-{{ a.discount }}%</span>
+                    </div>
+                    <button class="sale-btn" onclick="addToCart('{{ a.meal.id }}', '{{ a.meal.name|escapejs }}', {{ a.meal.get_final_price }})">
+                        <span>Buyurtma berish</span><i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-sale">
+                <i class="fas fa-fire-flame-curved"></i>
+                <p style="font-size:17px;margin-bottom:8px;">Hozircha aktiv aksiyalar mavjud emas</p>
+                <p style="font-size:13px;">Tez orada yangi chegirmalar paydo bo'ladi!</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+function addToCart(id, name, price) {
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push({id, name, price});
+    localStorage.setItem('cart', JSON.stringify(cart));
+    updateCartBadge();
+    showToast(`${name} savatga qo'shildi`);
+}
+
+function showToast(message) {
+    document.querySelectorAll('.toast').forEach(t => t.remove());
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(0);z-index:10000;background:var(--ash);border:1px solid rgba(201,168,76,0.3);padding:16px 24px;border-radius:var(--r-md);display:flex;align-items:center;gap:12px;font-size:14px;color:var(--snow);box-shadow:0 20px 60px rgba(0,0,0,0.5);backdrop-filter:blur(16px);animation:toastIn 0.5s cubic-bezier(.34,1.56,.64,1) forwards;';
+    toast.innerHTML = `<i class="fas fa-check-circle" style="color:var(--gold);font-size:18px"></i><span>${message}</span>`;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.style.animation = 'toastOut 0.4s ease-in forwards';
+        setTimeout(() => toast.remove(), 400);
+    }, 2500);
+}
+
+/* Toast animations */
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+@keyframes toastOut{to{opacity:0;transform:translateX(-50%) translateY(20px)}}
+
+function updateCountdown() {
+    const target = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+    let prevSec = -1;
+    setInterval(() => {
+        const d = target.getTime() - Date.now();
+        if (d < 0) {
+            document.getElementById('countdown').innerHTML = '<p style="color:var(--gold);">Aksiya boshlandi!</p>';
+            return;
+        }
+        const dd = Math.floor(d / 86400000);
+        const hh = Math.floor((d % 86400000) / 3600000);
+        const mm = Math.floor((d % 3600000) / 60000);
+        const ss = Math.floor((d % 60000) / 1000);
+        const de = document.getElementById('days'); if (de) de.textContent = String(dd).padStart(2, '0');
+        const he = document.getElementById('hours'); if (he) he.textContent = String(hh).padStart(2, '0');
+        const me = document.getElementById('minutes'); if (me) me.textContent = String(mm).padStart(2, '0');
+        const se = document.getElementById('seconds');
+        if (se) {
+            se.textContent = String(ss).padStart(2, '0');
+            if (ss !== prevSec) {
+                se.classList.remove('tick');
+                void se.offsetWidth;
+                se.classList.add('tick');
+                prevSec = ss;
+            }
+        }
+    }, 1000);
+}
+
+document.addEventListener('DOMContentLoaded', updateCountdown);
+</script>
+{% endblock %}

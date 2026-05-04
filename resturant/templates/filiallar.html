@@ -1,0 +1,457 @@
+{% extends "base.html" %}
+{% load static l10n %}
+
+{% block title %}Filiallar — AMINA Premium Sushi{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+.branch-section {
+    padding: calc(var(--nav-h) + 60px) 0 100px;
+    min-height: 100vh;
+    position: relative;
+}
+
+.branch-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 400px;
+    background: radial-gradient(ellipse at 50% 0%, var(--gold-glow) 0%, transparent 70%);
+    pointer-events: none;
+    animation: branchBgPulse 8s ease-in-out infinite;
+}
+
+@keyframes branchBgPulse {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.1); }
+}
+
+.branch-header {
+    text-align: center;
+    margin-bottom: 56px;
+    position: relative;
+    z-index: 1;
+}
+
+.branch-header .section-eyebrow { justify-content: center; }
+
+.branch-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+.b-card {
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-xl);
+    padding: 36px;
+    transition: all 0.5s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+}
+
+.b-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.6s var(--ease-out);
+}
+
+.b-card:hover::before { transform: scaleX(1); }
+
+.b-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.04) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    border-radius: var(--r-xl);
+}
+
+.b-card:hover::after { opacity: 1; }
+
+.b-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--gold-dim);
+    box-shadow: 0 24px 56px rgba(0,0,0,0.2), 0 0 0 1px var(--gold-dim);
+}
+
+.b-card-top {
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    margin-bottom: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+.b-ico {
+    width: 64px;
+    height: 64px;
+    background: var(--gold-glow);
+    border: 1px solid rgba(201, 168, 76, 0.15);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: var(--gold);
+    flex-shrink: 0;
+    transition: all 0.5s var(--spring);
+}
+
+.b-card:hover .b-ico {
+    background: var(--gold);
+    color: var(--void);
+    transform: scale(1.1) rotate(360deg);
+    box-shadow: 0 0 30px var(--gold-glow-strong);
+}
+
+.b-name {
+    font-family: var(--font-serif);
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--snow);
+    transition: color 0.3s;
+}
+
+.b-card:hover .b-name { color: var(--gold); }
+
+.b-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--green);
+    font-weight: 500;
+}
+
+.b-status::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    animation: dotPulse 2s infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.4); }
+    50% { opacity: 0.4; box-shadow: 0 0 0 6px rgba(39, 174, 96, 0); }
+}
+
+.b-info {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding-top: 22px;
+    border-top: 1px solid var(--flint);
+    transition: border-color 0.3s;
+    position: relative;
+    z-index: 1;
+}
+
+.b-card:hover .b-info { border-color: var(--gold-dim); }
+
+.b-info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    color: var(--mist);
+    font-size: 14px;
+    line-height: 1.6;
+    transition: transform 0.3s var(--ease-out), color 0.3s;
+}
+
+.b-info-item:hover {
+    transform: translateX(4px);
+    color: var(--snow);
+}
+
+.b-info-item i {
+    color: var(--gold);
+    margin-top: 3px;
+    width: 16px;
+    flex-shrink: 0;
+    transition: transform 0.3s var(--spring);
+}
+
+.b-info-item:hover i { transform: scale(1.2); }
+
+.b-info-item a {
+    color: var(--gold);
+    transition: color 0.3s;
+}
+
+.b-info-item a:hover { color: var(--gold-bright); }
+
+.b-btns {
+    display: flex;
+    gap: 10px;
+    margin-top: 24px;
+    padding-top: 22px;
+    border-top: 1px solid var(--flint);
+    position: relative;
+    z-index: 1;
+}
+
+.b-btn-map {
+    flex: 1;
+    padding: 12px;
+    background: var(--gold-glow);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    color: var(--gold);
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.3s var(--ease-out);
+    text-decoration: none;
+}
+
+.b-btn-map:hover {
+    background: var(--gold);
+    color: var(--void);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px var(--gold-glow-strong);
+}
+
+.b-btn-map i { transition: transform 0.3s; }
+.b-btn-map:hover i { transform: translateX(3px); }
+
+.b-btn-call {
+    flex: 1;
+    padding: 12px;
+    background: var(--gold);
+    color: var(--void);
+    border: none;
+    border-radius: var(--r-sm);
+    font-size: 13px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    transition: all 0.3s var(--ease-out);
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.b-btn-call::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+}
+
+.b-btn-call:hover::before {
+    animation: shimmerSweep 0.6s var(--ease-out);
+}
+
+.b-btn-call:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--gold-glow-strong);
+}
+
+.b-btn-call i { transition: transform 0.3s var(--spring); }
+.b-btn-call:hover i { transform: scale(1.2) rotate(15deg); }
+
+/* ── Map ── */
+.map-section {
+    margin-top: 80px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+}
+
+.map-section .section-eyebrow { justify-content: center; margin-bottom: 24px; }
+
+.map-box {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    height: 500px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.map-box:hover {
+    border-color: var(--gold-dim);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+}
+
+.map-box .leaflet-container { height: 100%; width: 100%; }
+
+.empty-branches {
+    grid-column: 1/-1;
+    text-align: center;
+    padding: 70px 20px;
+    color: var(--mist);
+}
+
+.empty-branches i { font-size: 40px; opacity: 0.3; margin-bottom: 16px; display: block; animation: float 3s ease-in-out infinite; }
+
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-12px)} }
+
+@media (max-width: 768px) {
+    .branch-grid { grid-template-columns: 1fr; }
+    .b-card { padding: 28px; }
+    .b-btns { flex-direction: column; }
+    .map-box { height: 280px; }
+}
+
+@media (max-width: 480px) {
+    .b-card-top { flex-direction: column; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="branch-section">
+    <div class="container">
+        <div class="branch-header">
+            <div class="section-eyebrow">
+                <span class="section-jp">支店</span>
+                <span class="section-line"></span>
+                <span class="section-num">03</span>
+            </div>
+            <h1 class="section-title">Bizning <em>Filiallar</em></h1>
+            <p class="section-sub" style="margin: 0 auto;">Sizga eng yaqin filialni tanlang</p>
+        </div>
+
+        <div class="branch-grid stagger-children">
+            {% for b in branches %}
+            <div class="b-card reveal">
+                <div class="b-card-top">
+                    <div class="b-ico"><i class="fas fa-store"></i></div>
+                    <div>
+                        <h3 class="b-name">{{ b.name }}</h3>
+                        <span class="b-status">Ochiq</span>
+                    </div>
+                </div>
+
+                <div class="b-info">
+                    <div class="b-info-item">
+                        <i class="fas fa-location-dot"></i>
+                        <div><strong style="color:var(--snow)">Manzil:</strong><br>{{ b.location_name }}</div>
+                    </div>
+                    {% if b.manager %}
+                    <div class="b-info-item">
+                        <i class="fas fa-user-tie"></i>
+                        <div><strong style="color:var(--snow)">Menejer:</strong><br>{{ b.manager.name }}</div>
+                    </div>
+                    {% endif %}
+                    <div class="b-info-item">
+                        <i class="fas fa-phone"></i>
+                        <div><strong style="color:var(--snow)">Telefon:</strong><br><a href="tel:{{ b.phone }}">{{ b.phone }}</a></div>
+                    </div>
+                    <div class="b-info-item">
+                        <i class="fas fa-clock"></i>
+                        <div><strong style="color:var(--snow)">Ish vaqti:</strong><br>10:00 - 23:00 (Har kuni)</div>
+                    </div>
+                </div>
+
+                <div class="b-btns">
+                    <a href="https://maps.google.com/?q={% localize off %}{{ b.location.lat }},{{ b.location.lon }}{% endlocalize %}" target="_blank" class="b-btn-map">
+                        <i class="fas fa-map-location-dot"></i><span>Xaritada ochish</span>
+                    </a>
+                    <a href="tel:{{ b.phone }}" class="b-btn-call">
+                        <i class="fas fa-phone"></i><span>Qo'ng'iroq</span>
+                    </a>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty-branches">
+                <i class="fas fa-store"></i>
+                <p style="font-size:16px;">Hozircha filiallar mavjud emas</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="map-section reveal">
+            <div class="section-eyebrow">
+                <span class="section-jp">地図</span>
+                <span class="section-line"></span>
+            </div>
+            <h2 class="section-title" style="font-size:clamp(24px,5vw,36px)">Barcha <em>Filiallar</em> Xaritada</h2>
+            <div class="map-box" id="branchMap"></div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const branchData = [
+        {% localize off %}
+        {% for b in branches %}
+        {
+            name: '{{ b.name }}',
+            location: '{{ b.location_name }}',
+            lat: {{ b.location.lat }},
+            lng: {{ b.location.lon }}
+        },
+        {% endfor %}
+        {% endlocalize %}
+    ];
+
+    if (branchData.length > 0) {
+        const map = L.map('branchMap', { zoomControl: false }).setView([branchData[0].lat, branchData[0].lng], 12);
+        L.control.zoom({ position: 'bottomright' }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; OpenStreetMap', maxZoom: 18
+        }).addTo(map);
+
+        const goldIcon = L.divIcon({
+            html: '<div style="background:#c9a84c;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 10px rgba(201,168,76,0.5);animation:pulse 2s infinite"></div>',
+            className: '', iconSize: [14, 14], iconAnchor: [7, 7], popupAnchor: [0, -10]
+        });
+
+        branchData.forEach((b, i) => {
+            setTimeout(() => {
+                const m = L.marker([b.lat, b.lng], { icon: goldIcon }).addTo(map);
+                m.bindPopup(
+                    '<div style="font-family:sans-serif;padding:6px">' +
+                    '<strong style="color:#1a1a1a">🍣 ' + b.name + '</strong><br>' +
+                    '<span style="color:#555;font-size:13px">' + b.location + '</span><br>' +
+                    '<a href="https://maps.google.com/?q=' + b.lat + ',' + b.lng + '" target="_blank" style="color:#c9a84c;font-size:13px;font-weight:600">Google Maps\'da ochish →</a>' +
+                    '</div>'
+                );
+            }, i * 200);
+        });
+
+        if (branchData.length > 1) {
+            const group = L.featureGroup(branchData.map(b => L.marker([b.lat, b.lng])));
+            map.fitBounds(group.getBounds(), { padding: [50, 50] });
+        }
+    }
+});
+</script>
+{% endblock %}

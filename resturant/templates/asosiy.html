@@ -1,0 +1,713 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}AMINA — Premium Sushi Art | Toshkent{% endblock %}
+
+{% block extra_styles %}
+<style>
+/* ── Hero ── */
+.hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+}
+
+.hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(ellipse at 20% 50%, rgba(201, 168, 76, 0.10) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 50%, rgba(201, 168, 76, 0.06) 0%, transparent 60%),
+        var(--void);
+    animation: heroBgPulse 12s ease-in-out infinite;
+}
+
+@keyframes heroBgPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.hero-particles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 1;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    opacity: 0;
+    animation: particleFloat 8s infinite;
+}
+
+@keyframes particleFloat {
+    0% { opacity: 0; transform: translateY(100vh) scale(0); }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { opacity: 0; transform: translateY(-100vh) scale(1); }
+}
+
+.hero-content {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
+    padding-top: var(--nav-h);
+}
+
+.hero-jp {
+    font-family: var(--font-jp);
+    font-size: 15px;
+    color: var(--gold);
+    letter-spacing: 10px;
+    margin-bottom: 28px;
+    opacity: 0;
+    animation: heroSlideUp 1s 0.3s var(--ease-out) forwards;
+}
+
+@keyframes heroSlideUp {
+    from { opacity: 0; transform: translateY(30px); filter: blur(4px); }
+    to { opacity: 0.6; transform: translateY(0); filter: blur(0); }
+}
+
+.hero-title {
+    font-family: var(--font-serif);
+    font-size: clamp(60px, 11vw, 140px);
+    font-weight: 700;
+    line-height: 0.92;
+    margin-bottom: 32px;
+    letter-spacing: -3px;
+    opacity: 0;
+    animation: heroIn 1s 0.2s var(--ease-out) forwards;
+}
+
+@keyframes heroIn {
+    from { opacity: 0; transform: translateY(40px); filter: blur(6px); }
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+}
+
+.hero-title em {
+    color: var(--gold);
+    font-style: italic;
+    display: inline-block;
+    position: relative;
+}
+
+.hero-title em::after {
+    content: '';
+    position: absolute;
+    bottom: 4px;
+    left: -4px;
+    right: -4px;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    border-radius: 2px;
+    opacity: 0;
+    animation: underlineIn 1s 1.2s var(--ease-out) forwards;
+}
+
+@keyframes underlineIn {
+    from { transform: scaleX(0); opacity: 0; }
+    to { transform: scaleX(1); opacity: 0.4; }
+}
+
+.hero-sub {
+    color: var(--mist);
+    font-size: 18px;
+    max-width: 500px;
+    margin-bottom: 48px;
+    line-height: 1.9;
+    opacity: 0;
+    animation: heroSlideUp 1s 0.5s var(--ease-out) forwards;
+}
+
+.hero-btns {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: heroSlideUp 1s 0.7s var(--ease-out) forwards;
+}
+
+.btn-gold, .btn-outline {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-gold::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+}
+
+.btn-gold:hover::after { opacity: 1; }
+
+.hero-visual {
+    position: absolute;
+    right: -2%;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50%;
+    height: 80%;
+    z-index: 5;
+    opacity: 0.5;
+    animation: visualFloat 8s ease-in-out infinite;
+}
+
+@keyframes visualFloat {
+    0%, 100% { transform: translateY(-50%) translateX(0) rotate(0deg); }
+    50% { transform: translateY(calc(-50% - 12px)) translateX(-8px) rotate(0.5deg); }
+}
+
+.hero-visual img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: var(--r-xl) 0 0 var(--r-xl);
+    animation: kenBurns 25s ease-in-out infinite alternate;
+}
+
+@keyframes kenBurns {
+    from { transform: scale(1) translate(0, 0); }
+    to { transform: scale(1.06) translate(-1%, -1%); }
+}
+
+.hero-visual::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, var(--void) 0%, rgba(5,5,5,0.6) 30%, transparent 60%);
+    border-radius: var(--r-xl) 0 0 var(--r-xl);
+}
+
+.scroll-hint {
+    position: absolute;
+    bottom: 36px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s forwards;
+}
+
+@keyframes fadeIn {
+    to { opacity: 1; }
+}
+
+.scroll-hint span {
+    font-size: 10px;
+    color: var(--smoke);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.scroll-hint i {
+    color: var(--gold);
+    font-size: 14px;
+    animation: bounceDown 2s infinite;
+}
+
+@keyframes bounceDown {
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+    40% { transform: translateY(8px); }
+    60% { transform: translateY(4px); }
+}
+
+/* ── Sets Section ── */
+.sets-section {
+    padding: 120px 0;
+    background: var(--ink);
+    position: relative;
+}
+
+.sets-section::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+    opacity: 0.3;
+}
+
+.sets-header {
+    text-align: center;
+    margin-bottom: 72px;
+}
+
+.sets-header .section-eyebrow { justify-content: center; }
+
+.sets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+    gap: 32px;
+}
+
+.set-card {
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-xl);
+    overflow: hidden;
+    transition: all 0.5s var(--ease-out);
+    position: relative;
+}
+
+.set-card:hover {
+    transform: translateY(-12px);
+    border-color: var(--gold-dim);
+    box-shadow: 0 24px 64px rgba(201, 168, 76, 0.1), 0 8px 24px rgba(0,0,0,0.3);
+}
+
+.set-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(201, 168, 76, 0.06) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.5s;
+    pointer-events: none;
+    border-radius: var(--r-xl);
+}
+
+.set-card:hover::after { opacity: 1; }
+
+.set-img {
+    height: 240px;
+    overflow: hidden;
+    position: relative;
+}
+
+.set-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, transparent 60%, rgba(5,5,5,0.4));
+    pointer-events: none;
+    transition: opacity 0.4s;
+}
+
+.set-card:hover .set-img::after { opacity: 0.5; }
+
+.set-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1s var(--ease-out);
+}
+
+.set-card:hover .set-img img {
+    transform: scale(1.08);
+}
+
+.set-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: var(--red);
+    color: #fff;
+    padding: 6px 14px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 50px;
+    z-index: 2;
+    animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4); }
+    50% { box-shadow: 0 0 0 8px rgba(231, 76, 60, 0); }
+}
+
+.set-body {
+    padding: 28px;
+    position: relative;
+    z-index: 1;
+}
+
+.set-tag {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.set-name {
+    font-family: var(--font-serif);
+    font-size: 26px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--snow);
+    transition: color 0.3s;
+}
+
+.set-card:hover .set-name { color: var(--gold); }
+
+.set-desc {
+    color: var(--mist);
+    font-size: 14px;
+    line-height: 1.7;
+    margin-bottom: 14px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.set-items-text {
+    font-size: 12px;
+    color: var(--gold-dim);
+    margin-bottom: 14px;
+}
+
+.set-highlights {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.set-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 18px;
+    border-top: 1px solid var(--flint);
+    transition: border-color 0.3s;
+}
+
+.set-card:hover .set-footer { border-color: var(--gold-dim); }
+
+.set-btn {
+    width: 48px;
+    height: 48px;
+    background: var(--gold);
+    color: var(--void);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.4s var(--spring);
+}
+
+.set-btn:hover {
+    transform: scale(1.15) rotate(90deg);
+    box-shadow: 0 8px 24px var(--gold-glow-strong);
+}
+
+.set-btn i {
+    transition: transform 0.3s;
+}
+
+/* ── Features ── */
+.features-section {
+    padding: 120px 0;
+    position: relative;
+}
+
+.features-section::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, var(--gold-glow) 0%, transparent 70%);
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+    animation: glowPulse 6s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% { opacity: 0.3; transform: translate(-50%, -50%) scale(1); }
+    50% { opacity: 0.6; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 32px;
+    position: relative;
+    z-index: 1;
+}
+
+.feature-card {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--ash);
+    border: 1px solid var(--flint);
+    border-radius: var(--r-lg);
+    transition: all 0.5s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform 0.6s var(--ease-out);
+}
+
+.feature-card:hover::before {
+    transform: scaleX(1);
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    border-color: var(--gold-dim);
+    box-shadow: 0 20px 48px rgba(0,0,0,0.2);
+}
+
+.feature-icon {
+    width: 72px;
+    height: 72px;
+    background: var(--gold-glow);
+    border: 1px solid rgba(201, 168, 76, 0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+    font-size: 28px;
+    color: var(--gold);
+    transition: all 0.5s var(--spring);
+}
+
+.feature-card:hover .feature-icon {
+    background: var(--gold);
+    color: var(--void);
+    transform: scale(1.1) rotate(360deg);
+    box-shadow: 0 0 30px var(--gold-glow-strong);
+}
+
+.feature-name {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    color: var(--snow);
+    transition: color 0.3s;
+}
+
+.feature-card:hover .feature-name { color: var(--gold); }
+
+.feature-desc {
+    color: var(--mist);
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+    .hero-visual { opacity: 0.15; width: 100%; right: 0; }
+    .features-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 768px) {
+    .hero-title { font-size: clamp(48px, 14vw, 72px); letter-spacing: -1px; }
+    .hero-btns { flex-direction: column; }
+    .hero-btns .btn-gold, .hero-btns .btn-outline { justify-content: center; }
+    .sets-grid { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="hero" id="hero">
+    <div class="hero-particles" id="particles"></div>
+    <div class="hero-bg"></div>
+
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-jp">食の芸術 — SUSHI SAN'ATI</div>
+
+            <h1 class="hero-title">
+                Premium<br>
+                <em>Sushi</em> Art
+            </h1>
+
+            <p class="hero-sub">
+                Toshkentdagi eng nafis yapon oshxonasi. AMINA — bu nafaqat sushi, bu haqiqiy san'at asari.
+            </p>
+
+            <div class="hero-btns">
+                <a href="/menyu" class="btn-gold"><span>Menyuni ko'rish</span><i class="fas fa-arrow-right"></i></a>
+                <a href="/filiallar" class="btn-outline"><span>Filiallar</span><i class="fas fa-map-marker-alt"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <div class="hero-visual">
+        <img src="{% static 'images/hero-sushi.jpg' %}" alt="AMINA Premium Sushi" onerror="this.src='https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800';this.onerror=null;">
+    </div>
+
+    <div class="scroll-hint">
+        <span>Scroll</span>
+        <i class="fas fa-chevron-down"></i>
+    </div>
+</section>
+
+<section class="sets-section">
+    <div class="container">
+        <div class="sets-header">
+            <div class="section-eyebrow">
+                <span class="section-jp">セット — KOMBO</span>
+                <span class="section-line"></span>
+                <span class="section-num">01</span>
+            </div>
+            <h2 class="section-title">Maxsus <em>Setlar</em></h2>
+            <p class="section-sub" style="margin: 0 auto;">Bir nechta sevimli taomlar birgalikda chegirma bilan</p>
+        </div>
+
+        <div class="sets-grid stagger-children">
+            {% for set_obj in sets %}
+            <div class="set-card reveal">
+                <div class="set-img">
+                    {% if set_obj.images.first %}
+                    <img src="{{ set_obj.images.first.image.url }}" alt="{{ set_obj.name }}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400';this.onerror=null;">
+                    {% elif set_obj.image %}
+                    <img src="{{ set_obj.image.url }}" alt="{{ set_obj.name }}" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400';this.onerror=null;">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=400" alt="{{ set_obj.name }}">
+                    {% endif %}
+                    {% if set_obj.discount_percent > 0 %}
+                    <div class="set-badge">-{{ set_obj.discount_percent }}%</div>
+                    {% endif %}
+                </div>
+                <div class="set-body">
+                    <div class="set-tag">SET · {{ set_obj.servings }} kishilik</div>
+                    <h3 class="set-name">{{ set_obj.name }}</h3>
+                    <p class="set-desc">{{ set_obj.description|truncatewords:15 }}</p>
+                    {% if set_obj.items_description %}
+                    <p class="set-items-text"><i class="fas fa-list-ul"></i> {{ set_obj.items_description }}</p>
+                    {% endif %}
+                    {% if set_obj.highlights %}
+                    <div class="set-highlights">
+                        {% for h in set_obj.get_highlights_list %}
+                        <span class="tag"><i class="fas fa-check" style="font-size:9px;color:var(--green)"></i> {{ h }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="set-footer">
+                        <div>
+                            {% if set_obj.old_price %}
+                            <span class="price-old">{{ set_obj.old_price }} UZS</span>
+                            {% endif %}
+                            <div class="price-new">{{ set_obj.price }} UZS</div>
+                        </div>
+                        <a href="/menyu" class="set-btn"><i class="fas fa-bag-shopping"></i></a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="features-section">
+    <div class="container">
+        <div class="sets-header">
+            <div class="section-eyebrow">
+                <span class="section-jp">こだわり</span>
+                <span class="section-line"></span>
+                <span class="section-num">02</span>
+            </div>
+            <h2 class="section-title">Nega aynan <em>AMINA</em>?</h2>
+            <p class="section-sub" style="margin: 0 auto;">An'anaviy yapon uslublari va zamonaviy yondashuv uyg'unligi</p>
+        </div>
+
+        <div class="features-grid stagger-children">
+            <div class="feature-card reveal">
+                <div class="feature-icon"><i class="fas fa-fish"></i></div>
+                <h3 class="feature-name">Svejiy Ingredientlar</h3>
+                <p class="feature-desc">Har kuni yangi keltirilgan baliqlar va eng sara masalliqlar</p>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon"><i class="fas fa-user-chef"></i></div>
+                <h3 class="feature-name">Usta Oshpazlar</h3>
+                <p class="feature-desc">Yaponiyada o'qigan va 10+ yillik tajribaga ega ustalar</p>
+            </div>
+
+            <div class="feature-card reveal">
+                <div class="feature-icon"><i class="fas fa-star"></i></div>
+                <h3 class="feature-name">Premium Sifat</h3>
+                <p class="feature-desc">Har bir detal mukammal o'ylangan, yuqori sifatli xizmat</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Particles
+    const pc = document.getElementById('particles');
+    if (pc) {
+        for (let i = 0; i < 35; i++) {
+            const p = document.createElement('div');
+            p.className = 'particle';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.animationDelay = Math.random() * 8 + 's';
+            p.style.animationDuration = (Math.random() * 5 + 5) + 's';
+            p.style.width = p.style.height = (Math.random() * 3 + 1) + 'px';
+            p.style.boxShadow = `0 0 ${Math.random() * 6 + 2}px var(--gold)`;
+            pc.appendChild(p);
+        }
+    }
+
+    // Hero visual parallax
+    window.addEventListener('scroll', () => {
+        const v = document.querySelector('.hero-visual');
+        if (v && window.scrollY < window.innerHeight) {
+            v.style.transform = `translateY(calc(-50% + ${window.scrollY * 0.3}px))`;
+        }
+    });
+
+    // Tilt effect on cards
+    document.querySelectorAll('.set-card, .feature-card').forEach(card => {
+        card.addEventListener('mousemove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const centerX = rect.width / 2;
+            const centerY = rect.height / 2;
+            const rotateX = (y - centerY) / 25;
+            const rotateY = (centerX - x) / 25;
+            card.style.transform = `translateY(-12px) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+        card.addEventListener('mouseleave', () => {
+            card.style.transform = '';
+        });
+    });
+});
+</script>
+{% endblock %}
