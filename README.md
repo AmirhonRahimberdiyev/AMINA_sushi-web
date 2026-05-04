@@ -43,18 +43,6 @@ chmod +x setup.sh start_bot.sh
 
 ---
 
-## ⚙️ Sozlamalar
-
-`.env` yoki `src/settings.py` da:
-```python
-USER_BOT_TOKEN = '8793577525:AAG4a3pqO9prPMJkGXnMU2CKnFnLeCh0xDY'
-STAFF_BOT_TOKEN = '8714192126:AAGBazzW_xPuk6pT5eT5gNbOKnlx0R278eM'
-ADMIN_CHAT_ID = 6830116501
-SITE_URL = 'https://yourdomain.uz'
-```
-
----
-
 ## 🤖 Bot funksiyalari
 
 | Tugma | Funksiya |
