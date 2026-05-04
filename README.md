@@ -14,53 +14,44 @@ umami_final/
 │   │   ├── cart.html       — Savat & buyurtma
 │   │   ├── aksiyalar.html  — Aksiyalar
 │   │   ├── filiallar.html  — Filiallar
-│   │   └── tg_webapp.html  — Telegram Web App (YANGI!)
+│   │   └── tg_webapp.html  — Telegram Web App
 │   ├── static/         # CSS, JS, rasmlar
 │   ├── media/          # Yuklangan rasmlar
-│   ├── bot.py          # Telegram bot (YANGILANGAN!)
-│   ├── .env            # Token va sozlamalar
+│   ├── bot.py          # Telegram bot
 │   └── manage.py
 ├── requirements.txt
 ├── setup.sh            — Birinchi marta ishga tushirish
-├── start_server.sh     — Django server
-└── start_bot.sh        — Telegram bot
+├── start_all.bat       — Barcha servislarni ishga tushirish (Windows)
+├── stop_all.bat        — Barcha servislarni to'xtatish (Windows)
+└── .gitignore
 ```
 
 ---
 
 ## 🚀 Tez boshlash
 
-### 1. O'rnatish
+### Windows
+```batch
+start_all.bat
+```
+
+### Linux/Mac
 ```bash
-cd umami_final
-chmod +x setup.sh start_server.sh start_bot.sh
+chmod +x setup.sh start_bot.sh
 ./setup.sh
-```
-
-### 2. Server ishga tushirish (1-terminal)
-```bash
-./start_server.sh
-```
-
-### 3. Bot ishga tushirish (2-terminal)
-```bash
-./start_bot.sh
 ```
 
 ---
 
-## ⚙️ Sozlamalar (`.env`)
+## ⚙️ Sozlamalar
 
-```env
-BOT_TOKEN=8714192126:AAGBazzW_xPuk6pT5eT5gNbOKnlx0R278eM
-BOT_CHAT_ID=6830116501
-ADMIN_CHAT_ID=6830116501
-BOT_USERNAME=amina_suhsi_order_bot
-SITE_URL=http://localhost:8000   ← Production da o'zgartiring!
+`.env` yoki `src/settings.py` da:
+```python
+USER_BOT_TOKEN = '8793577525:AAG4a3pqO9prPMJkGXnMU2CKnFnLeCh0xDY'
+STAFF_BOT_TOKEN = '8714192126:AAGBazzW_xPuk6pT5eT5gNbOKnlx0R278eM'
+ADMIN_CHAT_ID = 6830116501
+SITE_URL = 'https://yourdomain.uz'
 ```
-
-> ⚠️ **MUHIM**: Telegram Web App ishlatish uchun HTTPS kerak bo'ladi!
-> Production da `SITE_URL=https://sizningsayt.uz` deb yozing.
 
 ---
 
@@ -71,49 +62,28 @@ SITE_URL=http://localhost:8000   ← Production da o'zgartiring!
 | 🍣 Menyu | Kategoriyalar va taomlar |
 | 🎁 Aksiyalar | Faol chegirmalar |
 | 📍 Filiallar | Xarita bilan filiallar |
-| 📲 Buyurtma berish | **Telegram Web App** ochadi |
+| 📦 Buyurtmalarim | Buyurtmalar tarixi (Bugun/Kecha/Hafta/Oy/Yil) |
+| 📲 Buyurtma berish | Telegram Web App ochadi |
 | 📞 Aloqa | Telefon va manzil |
 
 ### Admin komandalar
 ```
 /orders  — Yangi buyurtmalarni ko'rish
-/stats   — Statistika (buyurtmalar, foydalanuvchilar)
-```
-
-### Yangi buyurtma kelganda admin quyidagini oladi:
-```
-🍣 YANGI BUYURTMA #42
-
-👤 Ali Valiyev
-📞 +998901234567
-📍 Chilonzor, 12-kvartal, 5-uy
-
-🛒 Buyurtma:
-  • Salmon Roll — 65,000 so'm
-  • Nigiri Set — 95,000 so'm
-
-💰 Jami: 160,000 so'm
-💳 Click
-📌 Telegram Web App
-🕐 15.05.2026 14:30
-
-[✅ Tasdiqlash] [❌ Bekor]
+/stats   — Statistika
 ```
 
 ---
 
 ## 📲 Telegram Web App
 
-Web App manzili: `http://yourdomain.com/tg-app/`
-
 **Imkoniyatlar:**
 - Premium dark dizayn
 - Kategoriya bo'yicha filter
 - Qidiruv
-- Savatga qo'shish va miqdor boshqaruvi
-- Foydalanuvchi ma'lumotlari avtomatik to'ldirish (Telegram'dan)
-- To'lov usuli tanlash (Naqd/Karta/Click/Payme)
-- Buyurtma tasdiqlanganda Telegram orqali bildirishnoma
+- Savatga qo'shish
+- Filial tanlash
+- To'lov usuli tanlash
+- Buyurtma tarixi
 
 ---
 
@@ -123,7 +93,8 @@ Web App manzili: `http://yourdomain.com/tg-app/`
 |-----|--------|
 | `/` | Bosh sahifa |
 | `/menyu/` | Menyu |
-| `/cart/` | Savat va buyurtma |
+| `/cart/` | Savat |
+| `/delivery/` | Yetkazib berish |
 | `/aksiyalar/` | Aksiyalar |
 | `/filiallar/` | Filiallar |
 | `/tg-app/` | Telegram Web App |
@@ -137,51 +108,22 @@ URL: `http://localhost:8000/admin`
 Login: `admin`
 Parol: `admin123`
 
-Admin panelda:
-- Buyurtmalarni boshqarish va status o'zgartirish
-- Taomlar va kategoriyalar qo'shish/tahrirlash
-- Aksiyalar yaratish
-- Filiallarni boshqarish
-- Telegram foydalanuvchilarni ko'rish
-
----
-
-## 🏭 Production uchun (Server deploy)
-
-### Nginx + Gunicorn
-
-```bash
-pip install gunicorn
-gunicorn src.wsgi:application --workers 3 --bind 0.0.0.0:8000
-```
-
-### .env ni yangilash
-```env
-SITE_URL=https://sizningsayt.uz
-```
-
-### Webhook o'rnatish (ixtiyoriy)
-```bash
-curl "https://api.telegram.org/bot8714192126:AAGBazzW_xPuk6pT5eT5gNbOKnlx0R278eM/setWebhook?url=https://sizningsayt.uz/webhook/"
-```
-
 ---
 
 ## 📦 Kerakli paketlar
 
 ```
-Django>=4.2,<5.0
-python-telegram-bot==20.7
+Django>=4.2
+python-telegram-bot>=20.7
 Pillow>=10.0.0
-python-dotenv>=1.0.0
 requests>=2.31.0
+pytz>=2024.1
 ```
 
 ---
 
-## 📞 Yordam kerakmi?
+## Muammo yuz bersa:
 
-Muammo yuz bersa:
-1. `.env` faylidagi token to'g'riligini tekshiring
-2. `pip install -r requirements.txt` ni qaytadan bajaring
-3. `python manage.py migrate` ni bajaring
+1. Tokenlarni tekshiring
+2. `pip install -r requirements.txt`
+3. `python manage.py migrate`
